@@ -1,19 +1,53 @@
 # Visual Studio
 .vs/
+.vscode/
 
 # Build folders
 bin/
 obj/
 
-# User files
+# User-specific files
 *.user
+*.rsuser
 *.suo
 *.userosscache
 *.sln.docstates
 
-# Database / cache
-*.db
+# Visual Studio cache
 *.cache
+*.db
+*.opendb
 
 # Logs
 *.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test results
+TestResults/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Generated files
+*.g.cs
+*.g.i.cs
+
+# Publish output
+publish/
+
+# Backup files
+*.bak
+*.backup
