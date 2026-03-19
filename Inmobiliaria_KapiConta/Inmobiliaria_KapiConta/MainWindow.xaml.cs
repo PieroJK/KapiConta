@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+//using Inmobiliaria_KapiConta.Helpers;
 
 namespace Inmobiliaria_KapiConta
 {
@@ -19,6 +20,11 @@ namespace Inmobiliaria_KapiConta
         public MainWindow()
         {
             InitializeComponent();
+            // 🔐 Generar hash
+            //string hash = PasswordHelper.HashPassword("123456");
+
+            // 👇 Mostrar resultado
+            //MessageBox.Show(hash);
         }
     }
 }
