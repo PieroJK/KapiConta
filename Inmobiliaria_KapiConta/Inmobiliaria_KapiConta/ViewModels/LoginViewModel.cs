@@ -1,49 +1,39 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Inmobiliaria_KapiConta.Helpers;
+using Inmobiliaria_KapiConta.Services;
+using Inmobiliaria_KapiConta.Models;
 
-public class LoginViewModel : INotifyPropertyChanged
+namespace Inmobiliaria_KapiConta.ViewModels
 {
-    private readonly AuthService _authService = new AuthService();
-
-    private string _usuario;
-    public string Usuario
+    public class LoginViewModel
     {
-        get => _usuario;
-        set { _usuario = value; OnPropertyChanged(); }
-    }
+        public string Usuario { get; set; }
+        public string Password { get; set; }
 
-    private string _password;
-    public string Password
-    {
-        get => _password;
-        set { _password = value; OnPropertyChanged(); }
-    }
+        public ICommand LoginCommand { get; }
 
-    public ICommand LoginCommand { get; }
-
-    public LoginViewModel()
-    {
-        LoginCommand = new RelayCommand(Login);
-    }
-
-    private void Login()
-    {
-        bool isValid = _authService.Login(Usuario, Password);
-
-        if (isValid)
+        public LoginViewModel()
         {
-            MessageBox.Show("Login correcto ?");
-            // ?? aquí luego abrimos MainWindow
+            LoginCommand = new RelayCommand(Login);
         }
-        else
+
+        private void Login()
         {
-            MessageBox.Show("Usuario o contraseña incorrectos ?");
+            var authService = new AuthService();
+            Usuario user = authService.Login(Usuario, Password);
+
+            if (user != null)
+            {
+                //  GUARDAR SESIÓN
+                Session.CurrentUser = user;
+
+                MessageBox.Show($"Bienvenido {user.Nombre} ({user.Rol.Nombre}) ?");
+            }
+            else
+            {
+                MessageBox.Show("Credenciales incorrectas ?");
+            }
         }
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string prop = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 }

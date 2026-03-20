@@ -6,7 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inmobiliaria_KapiConta"
         mc:Ignorable="d"
-        Title="KapiConta" Height="450" Width="800">
+        Title="KapiConta" Height="450" Width="800" WindowStartupLocation="CenterScreen"
+		ResizeMode="NoResize">
     <Grid>
 		<views:LoginView/>
     </Grid>

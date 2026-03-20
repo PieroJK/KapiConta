@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using Inmobiliaria_KapiConta.ViewModels;
 
 namespace Inmobiliaria_KapiConta.Views.Login
 {
@@ -14,7 +15,7 @@ namespace Inmobiliaria_KapiConta.Views.Login
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             var vm = (LoginViewModel)DataContext;
-            vm.Password = PasswordBox.Password; // aquí pasas el password
+            vm.Password = PasswordBox.Password;
             vm.LoginCommand.Execute(null);
         }
     }
