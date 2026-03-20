@@ -9,7 +9,10 @@
 		</Grid.ColumnDefinitions>
 
 		<!-- 🔹 LADO IZQUIERDO -->
-		<Grid Grid.Column="0" Background="#1E8C8A">
+        <Grid Grid.Column="0" Background="#1E8C8A">
+
+            <Image Source="pack://application:,,,/Assets/Login-removebg-preview.png"
+                   Stretch="UniformToFill"/>
 
 			<!-- Texto inferior -->
 			<TextBlock Text="Sistema Contable Peruano 2026 © KapiConta"
