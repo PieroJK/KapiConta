@@ -337,7 +337,7 @@
                                 Style="{StaticResource BtnRegistrar}"
                                 Content="Registrar"
                                 Command="{Binding RegistrarCommand}"
-                                Click="RegistrarButton_Click"/>
+                                />
                     </Grid>
 
                 </StackPanel>

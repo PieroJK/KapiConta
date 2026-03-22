@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Inmobiliaria_KapiConta.Helpers;
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
@@ -98,12 +99,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public DashboardViewModel()
         {
-            RegistrarEmpresaCommand = new RelayCommand(_ => Navegar("RegistrarEmpresa"));
-            ListadoEmpresaCommand = new RelayCommand(_ => Navegar("ListadoEmpresa"));
-            IngresarEmpresaCommand = new RelayCommand(_ => Navegar("IngresarEmpresa"));
-            RegistrarUsuarioCommand = new RelayCommand(_ => Navegar("RegistrarUsuario"));
-            ListadoUsuarioCommand = new RelayCommand(_ => Navegar("ListadoUsuario"));
-            CerrarSesionCommand = new RelayCommand(_ => CerrarSesion());
+            RegistrarEmpresaCommand = new RelayCommand(() => Navegar("RegistrarEmpresa"));
+            ListadoEmpresaCommand = new RelayCommand(() => Navegar("ListadoEmpresa"));
+            IngresarEmpresaCommand = new RelayCommand(() => Navegar("IngresarEmpresa"));
+            RegistrarUsuarioCommand = new RelayCommand(() => Navegar("RegistrarUsuario"));
+            ListadoUsuarioCommand = new RelayCommand(() => Navegar("ListadoUsuario"));
+            CerrarSesionCommand = new RelayCommand(() => CerrarSesion());
         }
 
         // ══════════════════════════════════════════
@@ -140,24 +141,4 @@ namespace Inmobiliaria_KapiConta.ViewModels
     // HELPER: RelayCommand
     // (si ya tienes uno en el proyecto, borra este)
     // ══════════════════════════════════════════
-
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object?> _execute;
-        private readonly Func<object?, bool>? _canExecute;
-
-        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
-        {
-            _execute = execute;
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
-        public void Execute(object? parameter) => _execute(parameter);
-        public event EventHandler? CanExecuteChanged
-        {
-            add => CommandManager.RequerySuggested += value;
-            remove => CommandManager.RequerySuggested -= value;
-        }
-    }
 }
