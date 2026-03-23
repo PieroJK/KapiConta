@@ -8,7 +8,7 @@ namespace Inmobiliaria_KapiConta.Data
         {
             string host = "localhost";
             string port = "5432";
-            string database = "db_kapiconta";
+            string database = "bd_kapicont";
             string user = "postgres";
 
             // 🔐 contraseña desde variable de entorno
