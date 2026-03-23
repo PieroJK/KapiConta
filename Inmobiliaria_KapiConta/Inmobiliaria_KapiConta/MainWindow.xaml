@@ -1,14 +1,22 @@
 ﻿<Window x:Class="Inmobiliaria_KapiConta.MainWindow"
-        xmlns:views="clr-namespace:Inmobiliaria_KapiConta.Views.Login"
+        xmlns:login="clr-namespace:Inmobiliaria_KapiConta.Views.Login"
+        xmlns:empresa="clr-namespace:Inmobiliaria_KapiConta.Views.Enterprise"
+        xmlns:vm="clr-namespace:Inmobiliaria_KapiConta.ViewModels"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inmobiliaria_KapiConta"
         mc:Ignorable="d"
-        Title="KapiConta" Height="450" Width="800" WindowStartupLocation="CenterScreen"
-		ResizeMode="NoResize">
+        Title="KapiConta"  
+        Width="900"
+        Height="550"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
     <Grid>
-		<views:LoginView/>
+         <ContentControl Content="{Binding CurrentView}"/>
     </Grid>
 </Window>

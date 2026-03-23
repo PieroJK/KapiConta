@@ -16,7 +16,7 @@
                 r.estado AS rol_estado
 
             FROM usuario u
-            INNER JOIN rol_usuario r ON u.id_rol = r.id_rol
+            INNER JOIN rol r ON u.id_rol = r.id_rol
             WHERE u.usuario = @usuario
         ";
     }
