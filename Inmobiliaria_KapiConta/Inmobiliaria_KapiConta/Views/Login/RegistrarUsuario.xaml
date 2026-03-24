@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Inmobiliaria_KapiConta.Views.Usuarios.RegistrarUsuarioView"
+﻿<UserControl x:Class="Inmobiliaria_KapiConta.Views.Login.RegistrarUsuario"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
