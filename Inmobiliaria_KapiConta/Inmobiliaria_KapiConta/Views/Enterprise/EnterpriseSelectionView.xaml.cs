@@ -1,15 +1,13 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using Inmobiliaria_KapiConta.ViewModels;
+﻿using System.Windows.Controls;
 
 namespace Inmobiliaria_KapiConta.Views.Enterprise
 {
     public partial class EnterpriseSelectionView : UserControl
     {
-        public EnterpriseSelectionView(MainViewModel mainVM)
+        // ✅ Constructor SIN parámetros
+        public EnterpriseSelectionView()
         {
             InitializeComponent();
-            DataContext = new EnterpriseSelectionViewModel(mainVM);
         }
     }
 }

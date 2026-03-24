@@ -1,5 +1,4 @@
-﻿using Inmobiliaria_KapiConta.Views.Enterprise;
-using Inmobiliaria_KapiConta.Views.Login;
+﻿using Inmobiliaria_KapiConta.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -19,35 +18,40 @@ namespace Inmobiliaria_KapiConta.ViewModels
         }
 
         // 🔹 Tamaño de ventana
-        private double _windowWidth;
+        private double _windowWidth = 900;
         public double WindowWidth
         {
             get => _windowWidth;
-            set { _windowWidth = value; OnPropertyChanged(); }
+            set
+            {
+                _windowWidth = value;
+                OnPropertyChanged();
+            }
         }
 
-        private double _windowHeight;
+        private double _windowHeight = 600;
         public double WindowHeight
         {
             get => _windowHeight;
-            set { _windowHeight = value; OnPropertyChanged(); }
+            set
+            {
+                _windowHeight = value;
+                OnPropertyChanged();
+            }
         }
 
-        // 🔥 Constructor (pantalla inicial)
+        // 🔥 Navigation Service
+        public NavigationService Navigation { get; }
+
         public MainViewModel()
         {
-            CurrentView = new LoginView(this);
-            WindowWidth = 950;
-            WindowHeight = 600;
-        }
+            Navigation = new NavigationService(viewModel =>
+            {
+                CurrentView = viewModel;
+            }, this);
 
-        // 🔹 Navegación a selección de empresa
-        public void CambiarASeleccionEmpresa()
-        {
-            CurrentView = new EnterpriseSelectionView(this);
-
-            WindowWidth = 362;
-            WindowHeight = 500;
+            // Vista inicial
+            Navigation.NavigateTo(new LoginViewModel(this));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

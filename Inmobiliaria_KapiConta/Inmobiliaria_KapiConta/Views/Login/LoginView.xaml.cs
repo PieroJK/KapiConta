@@ -8,20 +8,19 @@ namespace Inmobiliaria_KapiConta.Views.Login
     {
         private bool isPasswordVisible = false;
 
-        public LoginView(MainViewModel mainVM)
+        // ? Constructor SIN parámetros (IMPORTANTE)
+        public LoginView()
         {
             InitializeComponent();
-            DataContext = new LoginViewModel(mainVM);
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var vm = (LoginViewModel)DataContext;
-            //Borrar
-            //MessageBox.Show(vm == null ? "VM NULL" : "VM OK");
-
-            vm.Password = PasswordBox.Password;
-            vm.LoginCommand.Execute(null);
+            if (DataContext is LoginViewModel vm)
+            {
+                vm.Password = PasswordBox.Password;
+                vm.LoginCommand.Execute(null);
+            }
         }
 
         private void TogglePasswordVisibility(object sender, RoutedEventArgs e)
@@ -33,7 +32,7 @@ namespace Inmobiliaria_KapiConta.Views.Login
                 PasswordBox.Visibility = Visibility.Visible;
                 VisiblePassword.Visibility = Visibility.Collapsed;
 
-                EyeIcon.Text = "\uE722"; // ??
+                EyeIcon.Text = "\uE722";
                 isPasswordVisible = false;
             }
             else
@@ -43,7 +42,7 @@ namespace Inmobiliaria_KapiConta.Views.Login
                 VisiblePassword.Visibility = Visibility.Visible;
                 PasswordBox.Visibility = Visibility.Collapsed;
 
-                EyeIcon.Text = "\uE8F4"; // ??
+                EyeIcon.Text = "\uE8F4";
                 isPasswordVisible = true;
             }
         }

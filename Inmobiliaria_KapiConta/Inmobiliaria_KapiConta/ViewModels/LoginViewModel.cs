@@ -4,10 +4,11 @@ using System.Windows.Input;
 using Inmobiliaria_KapiConta.Helpers;
 using Inmobiliaria_KapiConta.Services;
 using Inmobiliaria_KapiConta.Models;
+using Inmobiliaria_KapiConta.Interfaces; // ?? IMPORTANTE
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    public class LoginViewModel : INotifyPropertyChanged, IResizableView
     {
         private readonly MainViewModel _mainVM;
 
@@ -16,6 +17,10 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _mainVM = mainVM;
             LoginCommand = new RelayCommand(Login);
         }
+
+        // ?? TAMAÑO AUTOMÁTICO
+        public double Width => 950;
+        public double Height => 600;
 
         private string _usuario;
         public string Usuario
@@ -57,7 +62,6 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand LoginCommand { get; }
 
-
         private void ValidarUsuario()
         {
             if (string.IsNullOrEmpty(Usuario) || Usuario.Length <= 3)
@@ -76,7 +80,6 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void Login()
         {
-            // ?? Validar antes de consultar BD
             ValidarUsuario();
             ValidarPassword();
 
@@ -89,12 +92,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
             if (user != null)
             {
                 Session.CurrentUser = user;
-             
+
                 ErrorPassword = "";
                 ErrorUsuario = "";
 
-                //  CAMBIO DE VISTA (MVVM PURO)
-                _mainVM.CambiarASeleccionEmpresa();
+                // ?? AQUÍ EL CAMBIO IMPORTANTE
+                _mainVM.Navigation.NavigateTo(new EnterpriseSelectionViewModel(_mainVM));
             }
             else
             {
