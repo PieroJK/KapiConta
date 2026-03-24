@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Inmobiliaria_KapiConta.ViewModels;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,6 +21,31 @@ namespace Inmobiliaria_KapiConta
         public MainWindow()
         {
             InitializeComponent();
+            var vm = new MainViewModel();
+            DataContext = vm;
+
+            // Inicial
+            this.Loaded += (s, e) =>
+            {
+                this.Width = vm.WindowWidth;
+                this.Height = vm.WindowHeight;
+
+                this.Left = (SystemParameters.PrimaryScreenWidth - this.Width) / 2;
+                this.Top = (SystemParameters.PrimaryScreenHeight - this.Height) / 2;
+            };
+
+            // Cambios dinámicos
+            vm.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(vm.WindowWidth) || e.PropertyName == nameof(vm.WindowHeight))
+                {
+                    this.Width = vm.WindowWidth;
+                    this.Height = vm.WindowHeight;
+
+                    this.Left = (SystemParameters.PrimaryScreenWidth - this.Width) / 2;
+                    this.Top = (SystemParameters.PrimaryScreenHeight - this.Height) / 2;
+                }
+            };
             // 🔐 Generar hash
             //string hash = PasswordHelper.HashPassword("123456");
 

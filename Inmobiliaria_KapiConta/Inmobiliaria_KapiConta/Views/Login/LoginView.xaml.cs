@@ -8,15 +8,18 @@ namespace Inmobiliaria_KapiConta.Views.Login
     {
         private bool isPasswordVisible = false;
 
-        public LoginView()
+        public LoginView(MainViewModel mainVM)
         {
             InitializeComponent();
-            DataContext = new LoginViewModel();
+            DataContext = new LoginViewModel(mainVM);
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             var vm = (LoginViewModel)DataContext;
+            //Borrar
+            //MessageBox.Show(vm == null ? "VM NULL" : "VM OK");
+
             vm.Password = PasswordBox.Password;
             vm.LoginCommand.Execute(null);
         }

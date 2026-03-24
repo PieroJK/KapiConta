@@ -18,23 +18,39 @@ namespace Inmobiliaria_KapiConta.ViewModels
             }
         }
 
+        // 🔹 Tamaño de ventana
+        private double _windowWidth;
+        public double WindowWidth
+        {
+            get => _windowWidth;
+            set { _windowWidth = value; OnPropertyChanged(); }
+        }
+
+        private double _windowHeight;
+        public double WindowHeight
+        {
+            get => _windowHeight;
+            set { _windowHeight = value; OnPropertyChanged(); }
+        }
+
+        // 🔥 Constructor (pantalla inicial)
         public MainViewModel()
         {
-            var loginVM = new LoginViewModel(this);
-
-            CurrentView = new LoginView
-            {
-                DataContext = loginVM
-            };
+            CurrentView = new LoginView(this);
+            WindowWidth = 950;
+            WindowHeight = 600;
         }
 
-        //  Método para cambiar a selección de empresas
+        // 🔹 Navegación a selección de empresa
         public void CambiarASeleccionEmpresa()
         {
-            CurrentView = new EnterpriseSelectionView();
+            CurrentView = new EnterpriseSelectionView(this);
+
+            WindowWidth = 362;
+            WindowHeight = 500;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string name = "")
         {

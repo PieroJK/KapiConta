@@ -1,6 +1,4 @@
 ﻿<Window x:Class="Inmobiliaria_KapiConta.MainWindow"
-        xmlns:login="clr-namespace:Inmobiliaria_KapiConta.Views.Login"
-        xmlns:empresa="clr-namespace:Inmobiliaria_KapiConta.Views.Enterprise"
         xmlns:vm="clr-namespace:Inmobiliaria_KapiConta.ViewModels"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,13 +7,8 @@
         xmlns:local="clr-namespace:Inmobiliaria_KapiConta"
         mc:Ignorable="d"
         Title="KapiConta"  
-        Width="900"
-        Height="550"
-        WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
-    <Window.DataContext>
-        <vm:MainViewModel/>
-    </Window.DataContext>
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen" >
     <Grid>
          <ContentControl Content="{Binding CurrentView}"/>
     </Grid>

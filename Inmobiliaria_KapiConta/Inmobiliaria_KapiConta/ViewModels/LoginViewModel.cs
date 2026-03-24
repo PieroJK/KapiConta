@@ -57,10 +57,6 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public LoginViewModel()
-        {
-            LoginCommand = new RelayCommand(Login);
-        }
 
         private void ValidarUsuario()
         {
