@@ -9,13 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\capibara.png" />
     <None Remove="Assets\Login-removebg-preview.png" />
+    <None Remove="Assets\logo.png" />
+    <None Remove="Assets\logoConCapibara.png" />
+    <None Remove="Assets\PERSONA.png" />
+    <None Remove="Assets\SUNAT.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\capibara.png" />
     <Resource Include="Assets\Login-removebg-preview.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\logoConCapibara.png" />
+    <Resource Include="Assets\PERSONA.png" />
+    <Resource Include="Assets\SUNAT.png" />
   </ItemGroup>
 
   <ItemGroup>

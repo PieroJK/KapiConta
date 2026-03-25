@@ -97,7 +97,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 ErrorUsuario = "";
 
                 // ?? AQUÍ EL CAMBIO IMPORTANTE
-                _mainVM.Navigation.NavigateTo(new EnterpriseSelectionViewModel(_mainVM));
+                _mainVM.Navigation.NavigateTo(new SeleccionEmpresaViewModel(_mainVM));
             }
             else
             {

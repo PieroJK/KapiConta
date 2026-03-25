@@ -2,7 +2,16 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="Views\Dashboard\UserControl1.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Enterprise\EnterpriseSelectionView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Enterprise\SeleccionEmpresaPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Periodo\SeleccionPeriodoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
