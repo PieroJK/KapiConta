@@ -49,10 +49,33 @@
             </Menu>
 
             <!-- CONTENIDO -->
-            <Frame Grid.Row="1"
-                   Content="{Binding ContenidoActual}"
-                   NavigationUIVisibility="Hidden"
-                   Margin="40"/>
+            <TabControl Grid.Row="1"
+                        Background="Transparent"
+                        BorderThickness="0"
+            ItemsSource="{Binding Tabs}"
+            SelectedItem="{Binding TabSeleccionado}"
+            Margin="10">
+
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Titulo}" Margin="0,0,5,0"/>
+                            <Button Content="X"
+                        Width="18"
+                        Height="18"
+                        Command="{Binding DataContext.CerrarTabCommand, RelativeSource={RelativeSource AncestorType=TabControl}}"
+                        CommandParameter="{Binding}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding Contenido}"/>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+
+            </TabControl>
 
             <!-- FOOTER -->
             <Grid Grid.Row="2" Background="#DDDDDD">
