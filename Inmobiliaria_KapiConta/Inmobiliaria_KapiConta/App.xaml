@@ -6,6 +6,7 @@
              xmlns:enterpriseViews="clr-namespace:Inmobiliaria_KapiConta.Views.Enterprise"
              xmlns:periodoViews="clr-namespace:Inmobiliaria_KapiConta.Views.Periodo"
              xmlns:dashboarViews="clr-namespace:Inmobiliaria_KapiConta.Views.Dashboard"
+             xmlns:placuentasViews="clr-namespace:Inmobiliaria_KapiConta.Views.PlanCuentas"
              StartupUri="MainWindow.xaml">
 
     <Application.Resources>
@@ -23,7 +24,11 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
-            <dashboarViews:UserControl1/>
+            <dashboarViews:DashboardView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:PlanCuentasViewModel}">
+            <placuentasViews:PlanCuentasView />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">

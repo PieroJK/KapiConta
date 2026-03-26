@@ -20,12 +20,26 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public ICommand RegistrarTercerosCommand { get; }
         public ICommand ListadoTercerosCommand { get; }
 
+        private object _contenidoActual;
+        public object ContenidoActual
+        {
+            get => _contenidoActual;
+            set
+            {
+                _contenidoActual = value;
+                OnPropertyChanged();
+            }
+        }
         public DashboardViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
 
             PlanCuentasCommand = new RelayCommand(() =>
-                MessageBox.Show("Módulo Plan de Cuentas aún no implementado"));
+            {
+                if (Session.CurrentEmpresa == null) return;
+
+                ContenidoActual = new PlanCuentasViewModel(Session.CurrentEmpresa.IdEmpresa);
+            });
 
             RegistrarTercerosCommand = new RelayCommand(() =>
                 MessageBox.Show("Módulo Registrar Terceros aún no implementado"));

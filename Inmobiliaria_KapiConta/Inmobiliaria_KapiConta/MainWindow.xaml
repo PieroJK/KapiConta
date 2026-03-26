@@ -6,12 +6,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inmobiliaria_KapiConta"
         mc:Ignorable="d"
-        Title="KapiConta"
-        ResizeMode="NoResize"
+        Title="KapiConta"     
 
-        Width="{Binding WindowWidth, Mode=TwoWay}"
-        Height="{Binding WindowHeight, Mode=TwoWay}"
-        >
+        Width="{Binding WindowWidth}"
+        Height="{Binding WindowHeight}"
+        MinWidth="{Binding WindowWidth}"
+        MinHeight="{Binding WindowHeight}">
+    
 
     <Grid>
         <ContentControl Content="{Binding CurrentView}"/>

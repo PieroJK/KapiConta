@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Inmobiliaria_KapiConta.Views.Dashboard
 {
     /// <summary>
-    /// Lógica de interacción para UserControl1.xaml
+    /// Lógica de interacción para DashboardView.xaml
     /// </summary>
-    public partial class UserControl1 : UserControl
+    public partial class DashboardView : UserControl
     {
-        public UserControl1()
+        public DashboardView()
         {
             InitializeComponent();
         }
