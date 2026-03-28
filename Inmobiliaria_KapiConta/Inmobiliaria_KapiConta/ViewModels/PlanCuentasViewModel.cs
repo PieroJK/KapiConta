@@ -33,6 +33,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 _cuentaSeleccionada = value;
                 OnPropertyChanged();
                 CargarDetalleSeleccionado();
+                (ModificarCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (EliminarCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
 
@@ -113,7 +115,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // AUTOMATIZACIÓN
         // =========================
 
-        public ObservableCollection<AutomatizacionDetalleView> Automatizacion { get; set; } = new();
+        public ObservableCollection<AutomatizacionDetalleItem> Automatizacion { get; set; } = new();
 
         // =========================
         // COMMANDS
@@ -137,8 +139,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _service = new PlanCuentasService(empresaId);
 
             AgregarCommand = new RelayCommand(Agregar);
-            ModificarCommand = new RelayCommand(Modificar);
-            EliminarCommand = new RelayCommand(Eliminar);
+            ModificarCommand = new RelayCommand(Modificar, () => CuentaSeleccionada != null);
+            EliminarCommand = new RelayCommand(Eliminar, () => CuentaSeleccionada != null);
 
             AsientoMasCommand = new RelayCommand(AsientoMas);
             AsientoMenosCommand = new RelayCommand(AsientoMenos);
@@ -157,10 +159,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
             PlanCuentas = new ObservableCollection<PlanCuentaItem>(_service.ObtenerPlanCuentas());
             Elementos = new ObservableCollection<ComboItem>(_service.ObtenerElementos());
             Balances = new ObservableCollection<ComboItem>(_service.ObtenerBalances());
+            CuentasPadre = new ObservableCollection<CuentaPadreItem>(_service.ObtenerCuentasPadre());
 
             OnPropertyChanged(nameof(PlanCuentas));
             OnPropertyChanged(nameof(Elementos));
             OnPropertyChanged(nameof(Balances));
+            OnPropertyChanged(nameof(CuentasPadre));
         }
 
         // =========================
@@ -173,12 +177,19 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
             Codigo = CuentaSeleccionada.Codigo;
             Descripcion = CuentaSeleccionada.Descripcion;
-            
             CodigoPadre = CuentaSeleccionada.CodigoPadre;
             IdElemento = CuentaSeleccionada.IdElemento;
             IdBalance = CuentaSeleccionada.IdBalance;
             Analisis = CuentaSeleccionada.Analisis;
-            TieneAutomatizacion = CuentaSeleccionada.TieneAutomatizacion;
+
+            // 🔹 AQUÍ ESTÁ LO IMPORTANTE
+            var result = _service.ObtenerAutomatizacion(CuentaSeleccionada.IdPlanCuenta);
+
+            Automatizacion = new ObservableCollection<AutomatizacionDetalleItem>(result.lista);
+            TieneAutomatizacion = result.estado;
+
+            OnPropertyChanged(nameof(Automatizacion));
+            OnPropertyChanged(nameof(TieneAutomatizacion));
         }
 
         // =========================
@@ -187,48 +198,170 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void Agregar()
         {
-            if (string.IsNullOrWhiteSpace(Codigo) || string.IsNullOrWhiteSpace(Descripcion))
-                return;
-            _service.InsertarCuenta(new PlanCuentaItem
+            try
             {
-                Codigo = Codigo,
-                Descripcion = Descripcion,
-                Nivel = Nivel,
-                CodigoPadre = CodigoPadre,
-                IdElemento = IdElemento ?? 0,
-                IdBalance = IdBalance,
-                Analisis = Analisis
-            });
-            
+                // ❗ VALIDACIONES (equivalentes a tu código anterior)
 
-            Refrescar();
+                if (string.IsNullOrWhiteSpace(Codigo))
+                {
+                    System.Windows.MessageBox.Show("Ingresa el código.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Descripcion))
+                {
+                    System.Windows.MessageBox.Show("Ingresa la descripción.");
+                    return;
+                }
+
+                if (IdElemento == null)
+                {
+                    System.Windows.MessageBox.Show("Selecciona el elemento.");
+                    return;
+                }
+
+                // ⚠ Antes usabas ComboBox (Sí/No), ahora es bool
+                // así que no necesitas validar SelectedIndex
+
+                // ❗ VALIDAR SI YA EXISTE
+                if (_service.ExisteCodigo(Codigo))
+                {
+                    System.Windows.MessageBox.Show("Ya existe una cuenta con ese código.");
+                    return;
+                }
+
+                //  INSERTAR
+                _service.InsertarCuenta(new PlanCuentaItem
+                {
+                    Codigo = Codigo,
+                    Descripcion = Descripcion,
+                    Nivel = Nivel,
+                    CodigoPadre = CodigoPadre,
+                    IdElemento = IdElemento.Value,
+                    IdBalance = IdBalance,
+                    Analisis = Analisis
+                });
+
+                // RECARGAR
+                Refrescar();
+
+                System.Windows.MessageBox.Show("Cuenta agregada correctamente.");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Error al agregar: " + ex.Message);
+            }
         }
 
         private void Modificar()
         {
-            if (CuentaSeleccionada == null) return;
-            _service.ModificarCuenta(new PlanCuentaItem
+            try
             {
-                IdPlanCuenta = CuentaSeleccionada.IdPlanCuenta,
-                Codigo = Codigo,
-                Descripcion = Descripcion,
-                Nivel = Nivel,
-                CodigoPadre = CodigoPadre,
-                IdElemento = IdElemento ?? 0,
-                IdBalance = IdBalance,
-                Analisis = Analisis
-            });
+                if (CuentaSeleccionada == null)
+                {
+                    System.Windows.MessageBox.Show("Selecciona una cuenta.");
+                    return;
+                }
 
-            Refrescar();
+                if (CuentaSeleccionada.EsBase)
+                {
+                    System.Windows.MessageBox.Show("Las cuentas base no se pueden modificar.");
+                    return;
+                }
+
+                var respuesta = System.Windows.MessageBox.Show(
+                    "¿Estás seguro de modificar esta cuenta?",
+                    "Confirmar modificación",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Question);
+
+                if (respuesta != System.Windows.MessageBoxResult.Yes)
+                    return;
+
+                // VALIDACIONES
+                if (string.IsNullOrWhiteSpace(Codigo))
+                {
+                    System.Windows.MessageBox.Show("Ingresa el código.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Descripcion))
+                {
+                    System.Windows.MessageBox.Show("Ingresa la descripción.");
+                    return;
+                }
+
+                if (IdElemento == null)
+                {
+                    System.Windows.MessageBox.Show("Selecciona el elemento.");
+                    return;
+                }
+
+                // VALIDAR DUPLICADO (IMPORTANTE)
+                if (_service.ExisteCodigo(Codigo, CuentaSeleccionada.IdPlanCuenta))
+                {
+                    System.Windows.MessageBox.Show("Ya existe una cuenta con ese código.");
+                    return;
+                }
+
+                // MODIFICAR
+                _service.ModificarCuenta(new PlanCuentaItem
+                {
+                    IdPlanCuenta = CuentaSeleccionada.IdPlanCuenta,
+                    Codigo = Codigo,
+                    Descripcion = Descripcion,
+                    Nivel = Nivel,
+                    CodigoPadre = CodigoPadre,
+                    IdElemento = IdElemento.Value,
+                    IdBalance = IdBalance,
+                    Analisis = Analisis
+                });
+
+                Refrescar();
+
+                System.Windows.MessageBox.Show("Cuenta modificada correctamente.");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Error al modificar: " + ex.Message);
+            }
         }
 
         private void Eliminar()
         {
-            if (CuentaSeleccionada == null) return;
-            Refrescar();
+            try
+            {
+                if (CuentaSeleccionada == null)
+                {
+                    System.Windows.MessageBox.Show("Selecciona una cuenta.");
+                    return;
+                }
 
-            _service.EliminarCuenta(CuentaSeleccionada.IdPlanCuenta);
-            Refrescar();
+                if (CuentaSeleccionada.EsBase)
+                {
+                    System.Windows.MessageBox.Show("Las cuentas base no se pueden eliminar.");
+                    return;
+                }
+
+                var respuesta = System.Windows.MessageBox.Show(
+                    "¿Estás seguro de eliminar esta cuenta?",
+                    "Confirmar eliminación",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Warning);
+
+                if (respuesta != System.Windows.MessageBoxResult.Yes)
+                    return;
+
+                _service.EliminarCuenta(CuentaSeleccionada.IdPlanCuenta);
+
+                Refrescar();
+
+                System.Windows.MessageBox.Show("Cuenta eliminada correctamente.");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Error al eliminar: " + ex.Message);
+            }
         }
 
         private void Refrescar()
@@ -279,13 +412,78 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void guardarautomatizacion()
         {
-            if (CuentaSeleccionada == null)
+            try
             {
-                System.Windows.MessageBox.Show("Selecciona una cuenta primero.");
-                return;
-            }
+                if (CuentaSeleccionada == null)
+                {
+                    System.Windows.MessageBox.Show("Selecciona una cuenta.");
+                    return;
+                }
 
-            System.Windows.MessageBox.Show("Aquí luego guardaremos la automatizacion.");
+                // 🔴 SI ESTA DESACTIVADO → NO VALIDAR DETALLE
+                if (!TieneAutomatizacion)
+                {
+                    _service.GuardarAutomatizacion(
+                        CuentaSeleccionada.IdPlanCuenta,
+                        new List<AutomatizacionDetalleItem>(),
+                        false
+                    );
+
+                    System.Windows.MessageBox.Show("Automatización desactivada.");
+                    return;
+                }
+
+                // 🔹 VALIDACIONES SOLO SI ESTA ACTIVO
+                if (Automatizacion.Count == 0)
+                {
+                    System.Windows.MessageBox.Show("Agrega al menos una cuenta.");
+                    return;
+                }
+
+                decimal totalDebe = Automatizacion
+                    .Where(x => x.TipoMovimiento == "D")
+                    .Sum(x => x.Porcentaje);
+
+                decimal totalHaber = Automatizacion
+                    .Where(x => x.TipoMovimiento == "H")
+                    .Sum(x => x.Porcentaje);
+
+                if (totalDebe <= 0)
+                {
+                    System.Windows.MessageBox.Show("Debe existir al menos una línea en Debe.");
+                    return;
+                }
+
+                if (totalHaber <= 0)
+                {
+                    System.Windows.MessageBox.Show("Debe existir al menos una línea en Haber.");
+                    return;
+                }
+
+                if (totalDebe != 100m)
+                {
+                    System.Windows.MessageBox.Show($"Debe = 100. Actual: {totalDebe}");
+                    return;
+                }
+
+                if (totalHaber != 100m)
+                {
+                    System.Windows.MessageBox.Show($"Haber = 100. Actual: {totalHaber}");
+                    return;
+                }
+
+                _service.GuardarAutomatizacion(
+                    CuentaSeleccionada.IdPlanCuenta,
+                    Automatizacion.ToList(),
+                    true
+                );
+
+                System.Windows.MessageBox.Show("Automatización guardada correctamente.");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Error: " + ex.Message);
+            }
         }
         private int CalcularNivelDesdeCodigo(string codigo)
         {

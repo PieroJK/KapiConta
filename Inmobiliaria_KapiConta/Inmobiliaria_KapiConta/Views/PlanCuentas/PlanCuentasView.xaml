@@ -217,11 +217,12 @@
                                    VerticalAlignment="Center"/>
 
                             <TextBox x:Name="txtDescripcion"
-                                 Grid.Column="1"
-                                 Height="34"
-                                 Background="#DDDDDD"
-                                 BorderThickness="0"
-                                 VerticalContentAlignment="Center"/>
+                                     Grid.Column="1"
+                                     Height="34"
+                                     Background="#DDDDDD"
+                                     BorderThickness="0"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding Descripcion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
 
                         <!-- NIVEL -->
@@ -257,12 +258,16 @@
                                    Foreground="White"
                                    VerticalAlignment="Center"/>
 
-                            <ComboBox x:Name="cbCuentaPadre"
+                            <ComboBox 
+                                  ItemsSource="{Binding CuentasPadre}"
+                                  SelectedValue="{Binding CodigoPadre}"
+                                  SelectedValuePath="Codigo"
+                                  DisplayMemberPath="Descripcion"
                                   Grid.Column="1"
                                   Height="38"
                                   Background="#DDDDDD"
                                   BorderThickness="0"
-                                  DisplayMemberPath="Texto"/>
+                                  />
                         </Grid>
 
                         <!-- ANALISIS -->
@@ -315,20 +320,24 @@
                                   Height="38"
                                   Background="#DDDDDD"
                                   BorderThickness="0"
-                                  DisplayMemberPath="Nombre"/>
+                                  DisplayMemberPath="Nombre"
+                                  SelectedValuePath="Id"/>
 
                             <TextBlock Text="Balance"
                                    Grid.Row="2"
                                    Foreground="White"
                                    VerticalAlignment="Center"/>
 
-                            <ComboBox x:Name="cbBalance"
+                            <ComboBox 
+                                  ItemsSource="{Binding Balances}"
+                                  SelectedValue="{Binding IdBalance}"
                                   Grid.Row="2"
                                   Grid.Column="1"
                                   Height="38"
                                   Background="#DDDDDD"
                                   BorderThickness="0"
-                                  DisplayMemberPath="Nombre"/>
+                                  DisplayMemberPath="Nombre"
+                                  SelectedValuePath="Id"/>
                         </Grid>
                     </Grid>
 
@@ -345,11 +354,12 @@
                         </Grid.RowDefinitions>
 
                         <!-- CHECK -->
-                        <CheckBox x:Name="chkAutomatizacion"
-                              Grid.Row="0"
-                              Content="Asientos Automáticos"
-                              Foreground="White"
-                              VerticalAlignment="Center"/>
+                        <CheckBox
+                            Grid.Row="0"
+                            Content="Asientos Automáticos"
+                            Foreground="White"
+                            VerticalAlignment="Center"
+                            IsChecked="{Binding TieneAutomatizacion, Mode=TwoWay}"/>
 
                         <!-- TABLA -->
                         <Border Grid.Row="2"
@@ -360,14 +370,18 @@
                                   ItemsSource="{Binding Automatizacion}"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
                                   HeadersVisibility="Column"
                                   GridLinesVisibility="All"
                                   RowHeight="26"
-                                  FontSize="11">
+                                  FontSize="11"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  IsReadOnly="True">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Cuenta" Binding="{Binding CuentaCodigo}" Width="*"/>
-                                    <DataGridTextColumn Header="%Debe" Binding="{Binding PorcentajeDebe}" Width="70"/>
-                                    <DataGridTextColumn Header="%Haber" Binding="{Binding PorcentajeHaber}" Width="70"/>
+                                    <DataGridTextColumn Header="Tipo" Binding="{Binding TipoMovimiento}" Width="60"/>
+                                    <DataGridTextColumn Header="%" Binding="{Binding Porcentaje}" Width="70"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Border>

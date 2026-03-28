@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="ViewModels\TabItemViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\capibara.png" />
     <Resource Include="Assets\Login-removebg-preview.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

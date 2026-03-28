@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
@@ -81,7 +82,37 @@ namespace Inmobiliaria_KapiConta.ViewModels
             });
 
             RegistrarTercerosCommand = new RelayCommand(() =>
-                MessageBox.Show("Módulo Registrar Terceros aún no implementado"));
+            {
+                try
+                {
+                    if (Session.CurrentEmpresa == null) return;
+
+                    var existente = Tabs.FirstOrDefault(t => t.Titulo == "Registrar Terceros");
+
+                    if (existente != null)
+                    {
+                        TabSeleccionado = existente;
+                        return;
+                    }
+
+                    var vm = new TerceroViewModel(); // 🔥 aquí probablemente rompe
+
+                    var nuevaTab = new TabItemViewModel
+                    {
+                        Titulo = "Registrar Terceros",
+                        Contenido = vm
+                    };
+
+                    Tabs.Add(nuevaTab);
+                    TabSeleccionado = nuevaTab;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] {DateTime.Now}");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            });
 
             ListadoTercerosCommand = new RelayCommand(() =>
                 MessageBox.Show("Módulo Listado de Terceros aún no implementado"));

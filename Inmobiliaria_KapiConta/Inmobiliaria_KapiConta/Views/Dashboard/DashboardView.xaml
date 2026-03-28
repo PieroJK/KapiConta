@@ -50,12 +50,13 @@
 
             <!-- CONTENIDO -->
             <TabControl Grid.Row="1"
-                        Background="Transparent"
-                        BorderThickness="0"
+            Background="Transparent"
+            BorderThickness="0"
             ItemsSource="{Binding Tabs}"
             SelectedItem="{Binding TabSeleccionado}"
             Margin="10">
 
+                <!-- HEADER -->
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -69,9 +70,10 @@
                     </DataTemplate>
                 </TabControl.ItemTemplate>
 
+                <!-- 🔥 ESTA PARTE FALTABA -->
                 <TabControl.ContentTemplate>
                     <DataTemplate>
-                        <ContentControl Content="{Binding Contenido}"/>
+                        <ContentPresenter Content="{Binding Contenido}"/>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
 
@@ -107,7 +109,6 @@
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"/>
             </Grid>
-
         </Grid>
     </Grid>
 </UserControl>
