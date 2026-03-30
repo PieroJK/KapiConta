@@ -17,6 +17,9 @@
     <Compile Update="Views\PlanCuentas\PlanCuentasView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Terceros\EditarTerceroView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Terceros\ListadoTercerosView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

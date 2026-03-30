@@ -130,6 +130,11 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
                     var vm = new ListadoTercerosViewModel(); // 🔥 aquí probablemente rompe
 
+                    vm.AbrirRegistrarTercero = () =>
+                    {
+                        RegistrarTercerosCommand.Execute(null);
+                    };
+
                     var nuevaTab = new TabItemViewModel
                     {
                         Titulo = "Listado Terceros",

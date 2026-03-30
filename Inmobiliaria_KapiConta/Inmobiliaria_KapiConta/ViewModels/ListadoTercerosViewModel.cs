@@ -52,6 +52,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         // Overlay
         private object _vistaActual;
+        public Action AbrirRegistrarTercero { get; set; }
         public object VistaActual
         {
             get => _vistaActual;
@@ -111,14 +112,25 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void AbrirNuevo()
         {
-            var vista = new Views.Terceros.RegistrarTerceroView();
-            VistaActual = vista;
-            OverlayVisible = Visibility.Visible;
+            AbrirRegistrarTercero?.Invoke();
         }
 
         private void AbrirEditar()
         {
-            MessageBox.Show("Luego abrir editor");
+            if (TerceroSeleccionado == null)
+                return;
+
+            var vm = new EditarTerceroViewModel(TerceroSeleccionado);
+
+            vm.Cerrar = () =>
+            {
+                OverlayVisible = Visibility.Collapsed;
+                VistaActual = null;
+                CargarListado();
+            };
+
+            VistaActual = vm;
+            OverlayVisible = Visibility.Visible;
         }
 
         private void Exportar()

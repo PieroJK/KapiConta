@@ -125,7 +125,8 @@
                           BorderThickness="2"
                           FontSize="14"
                           ItemsSource="{Binding Terceros}"
-                          SelectedItem="{Binding TerceroSeleccionado}">
+                          SelectedItem="{Binding TerceroSeleccionado}"
+                          MouseDoubleClick="dgTerceros_MouseDoubleClick">
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Código"

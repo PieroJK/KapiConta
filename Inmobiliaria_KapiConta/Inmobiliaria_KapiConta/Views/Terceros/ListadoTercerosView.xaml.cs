@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Inmobiliaria_KapiConta.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,15 @@ namespace Inmobiliaria_KapiConta.Views.Terceros
         public ListadoTercerosView()
         {
             InitializeComponent();
+        }
+
+        private void dgTerceros_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is ListadoTercerosViewModel vm)
+            {
+                if (vm.DobleClickCommand.CanExecute(null))
+                    vm.DobleClickCommand.Execute(null);
+            }
         }
     }
 }

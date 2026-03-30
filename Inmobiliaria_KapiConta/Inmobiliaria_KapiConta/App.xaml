@@ -40,6 +40,10 @@
             <terceroViews:ListadoTercerosView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:EditarTerceroViewModel}">
+            <terceroViews:EditarTerceroView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">
             <enterpriseViews:EnterpriseSelectionView/>
         </DataTemplate>
