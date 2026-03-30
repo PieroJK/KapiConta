@@ -115,7 +115,38 @@ namespace Inmobiliaria_KapiConta.ViewModels
             });
 
             ListadoTercerosCommand = new RelayCommand(() =>
-                MessageBox.Show("Módulo Listado de Terceros aún no implementado"));
+            {
+                try
+                {
+                    if (Session.CurrentEmpresa == null) return;
+
+                    var existente = Tabs.FirstOrDefault(t => t.Titulo == "Listado Terceros");
+
+                    if (existente != null)
+                    {
+                        TabSeleccionado = existente;
+                        return;
+                    }
+
+                    var vm = new ListadoTercerosViewModel(); // 🔥 aquí probablemente rompe
+
+                    var nuevaTab = new TabItemViewModel
+                    {
+                        Titulo = "Listado Terceros",
+                        Contenido = vm
+                    };
+
+                    Tabs.Add(nuevaTab);
+                    TabSeleccionado = nuevaTab;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] {DateTime.Now}");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            });
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
