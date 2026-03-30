@@ -25,11 +25,13 @@ namespace Inmobiliaria_KapiConta.Views.Terceros
         {
             InitializeComponent();
         }
-
         private void dgTerceros_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (DataContext is ListadoTercerosViewModel vm)
             {
+                // 🔍 DEBUG AQUÍ
+                MessageBox.Show(vm.TerceroSeleccionado?.Documento ?? "NULL");
+
                 if (vm.DobleClickCommand.CanExecute(null))
                     vm.DobleClickCommand.Execute(null);
             }

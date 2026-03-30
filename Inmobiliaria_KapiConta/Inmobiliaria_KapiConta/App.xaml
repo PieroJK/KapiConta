@@ -47,6 +47,7 @@
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">
             <enterpriseViews:EnterpriseSelectionView/>
         </DataTemplate>
+        
 
     </Application.Resources>
 </Application>

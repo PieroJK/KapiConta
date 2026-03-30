@@ -122,15 +122,14 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
             var vm = new EditarTerceroViewModel(TerceroSeleccionado);
 
-            vm.Cerrar = () =>
+            var view = new Views.Terceros.EditarTerceroView
             {
-                OverlayVisible = Visibility.Collapsed;
-                VistaActual = null;
-                CargarListado();
+                DataContext = vm
             };
 
-            VistaActual = vm;
-            OverlayVisible = Visibility.Visible;
+            vm.Cerrar = () => view.Close();
+
+            view.ShowDialog(); // 🔥 ventana modal
         }
 
         private void Exportar()

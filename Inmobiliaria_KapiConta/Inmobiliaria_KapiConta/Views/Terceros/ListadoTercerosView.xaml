@@ -97,14 +97,14 @@
                     </Grid>
                     <Grid 
                   Background="#80000000"
-                  Visibility="Collapsed"
+                  Visibility="{Binding OverlayVisible}"
                   Panel.ZIndex="100">
                         <Border Width="1132"
                         Height="598"
                         Background="#31465B"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
-                            <ContentControl x:Name="ModalContent"/>
+                            <ContentControl Content="{Binding VistaActual}"/>
                         </Border>
                     </Grid>
 
