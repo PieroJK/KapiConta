@@ -30,7 +30,7 @@ namespace Inmobiliaria_KapiConta.Views.Terceros
             if (DataContext is ListadoTercerosViewModel vm)
             {
                 // 🔍 DEBUG AQUÍ
-                MessageBox.Show(vm.TerceroSeleccionado?.Documento ?? "NULL");
+                //MessageBox.Show(vm.TerceroSeleccionado?.Documento ?? "NULL");
 
                 if (vm.DobleClickCommand.CanExecute(null))
                     vm.DobleClickCommand.Execute(null);
