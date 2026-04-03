@@ -3,6 +3,7 @@ using Inmobiliaria_KapiConta.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Inmobiliaria_KapiConta.ViewModels
@@ -13,6 +14,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ObservableCollection<TerceroTipoDocumento> TiposDocumento { get; set; } = new();
         public int IdTercero { get; set; }
+
+        public Action RefrescarListado { get; set; }
 
         private string _documento;
         public string Documento
@@ -155,18 +158,69 @@ namespace Inmobiliaria_KapiConta.ViewModels
         }
         private void Guardar()
         {
-            _service.Actualizar(new Tercero
+            try
             {
-                IdTercero = IdTercero,
-                Documento = Documento,
-                RazonSocial = RazonSocial,
-                Direccion = Direccion,
-                Condicion = Condicion,
-                Estado = Estado,
-                IdTerceroTipoDocumento = IdTerceroTipoDocumento
-            });
+                // 🔥 VALIDAR TIPO DOCUMENTO
+                if (TipoSeleccionado == null)
+                {
+                    MessageBox.Show("Seleccione el tipo de documento.");
+                    return;
+                }
 
-            Cerrar?.Invoke();
+                // 🔥 VALIDAR DOCUMENTO
+                if (string.IsNullOrWhiteSpace(Documento))
+                {
+                    MessageBox.Show("Ingrese el documento.");
+                    return;
+                }
+
+                if (TipoSeleccionado.Cod == 6 && Documento.Length != 11)
+                {
+                    MessageBox.Show("El RUC debe tener 11 dígitos.");
+                    return;
+                }
+
+                if (TipoSeleccionado.Cod == 1 && Documento.Length != 8)
+                {
+                    MessageBox.Show("El DNI debe tener 8 dígitos.");
+                    return;
+                }
+
+                // 🔥 VALIDAR RAZON SOCIAL
+                if (string.IsNullOrWhiteSpace(RazonSocial))
+                {
+                    MessageBox.Show("Ingrese la razón social.");
+                    return;
+                }
+
+                // 🔥 VALIDAR DUPLICADO (IMPORTANTE EN EDITAR)
+                var existente = _service.ObtenerPorDocumento(Documento);
+                if (existente != null && existente.IdTercero != IdTercero)
+                {
+                    MessageBox.Show("El documento ya pertenece a otro registro.");
+                    return;
+                }
+
+                // 🔥 GUARDAR
+                _service.Actualizar(new Tercero
+                {
+                    IdTercero = IdTercero,
+                    Documento = Documento,
+                    RazonSocial = RazonSocial,
+                    Direccion = Direccion,
+                    Condicion = Condicion,
+                    Estado = Estado,
+                    IdTerceroTipoDocumento = IdTerceroTipoDocumento
+                });
+
+                MessageBox.Show("Tercero actualizado correctamente.");
+                RefrescarListado?.Invoke();
+                Cerrar?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al actualizar: " + ex.Message);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

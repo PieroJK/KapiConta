@@ -122,6 +122,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
             var vm = new EditarTerceroViewModel(TerceroSeleccionado);
 
+            vm.RefrescarListado = () => CargarListado();
+
             var view = new Views.Terceros.EditarTerceroView
             {
                 DataContext = vm
