@@ -24,5 +24,10 @@ namespace Inmobiliaria_KapiConta.Views.Dashboard
         {
             InitializeComponent();
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

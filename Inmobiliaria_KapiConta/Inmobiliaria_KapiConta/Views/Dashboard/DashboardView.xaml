@@ -29,6 +29,12 @@
             <!-- 🔝 MENU -->
             <Menu Grid.Row="0" Background="#DDDDDD">
 
+                <MenuItem Header="Empresas"></MenuItem>
+                <MenuItem Header="Procesos">
+                    <MenuItem Header="Ingresar Asiento"></MenuItem>
+                    <MenuItem Header="Importar Asiento"></MenuItem>
+                </MenuItem>
+                
                 <MenuItem Header="Registro">
 
                     <MenuItem Header="Plan de Cuentas"
@@ -45,6 +51,11 @@
                     </MenuItem>
 
                 </MenuItem>
+                <MenuItem Header="Listado">
+                    
+                </MenuItem>
+                <MenuItem Header="Utilidades"></MenuItem>
+                
 
             </Menu>
 
