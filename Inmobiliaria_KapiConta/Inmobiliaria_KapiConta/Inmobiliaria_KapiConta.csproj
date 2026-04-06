@@ -15,6 +15,7 @@
     <None Remove="Assets\logoConCapibara.png" />
     <None Remove="Assets\PERSONA.png" />
     <None Remove="Assets\SUNAT.png" />
+    <None Remove="capibara.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
     <Resource Include="Assets\logoConCapibara.png" />
     <Resource Include="Assets\PERSONA.png" />
     <Resource Include="Assets\SUNAT.png" />
+    <Resource Include="capibara.png" />
   </ItemGroup>
 
   <ItemGroup>
