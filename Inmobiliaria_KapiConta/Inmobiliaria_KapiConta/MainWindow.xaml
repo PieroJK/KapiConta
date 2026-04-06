@@ -6,12 +6,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inmobiliaria_KapiConta"
         mc:Ignorable="d"
-        Title="KapiConta"     
+        Title="KapiConta"
+        
+        
 
         Width="{Binding WindowWidth}"
         Height="{Binding WindowHeight}"
         MinWidth="{Binding WindowWidth}"
-        MinHeight="{Binding WindowHeight}">
+        MinHeight="{Binding WindowHeight}" Icon="/capibara.png">
     
 
     <Grid>

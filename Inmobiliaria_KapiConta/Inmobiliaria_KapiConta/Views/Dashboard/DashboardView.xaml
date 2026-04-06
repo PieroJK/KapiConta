@@ -35,7 +35,7 @@
                     <MenuItem Header="Importar Asiento"></MenuItem>
                 </MenuItem>
                 
-                <MenuItem Header="Registro">
+                <MenuItem Header="Registro" Click="MenuItem_Click">
 
                     <MenuItem Header="Plan de Cuentas"
                           Command="{Binding PlanCuentasCommand}"/>
