@@ -122,54 +122,6 @@ namespace Inmobiliaria_KapiConta.Services
             return lista;
         }
 
-        public List<ComboItem> ObtenerElementos()
-        {
-            var lista = new List<ComboItem>();
-
-            using var cn = DbConnectionFactory.Create();
-            cn.Open();
-
-            string sql = @"SELECT id_elemento, nombre FROM elemento ORDER BY id_elemento;";
-
-            using var cmd = new NpgsqlCommand(sql, cn);
-            using var dr = cmd.ExecuteReader();
-
-            while (dr.Read())
-            {
-                lista.Add(new ComboItem
-                {
-                    Id = Convert.ToInt32(dr["id_elemento"]),
-                    Nombre = dr["nombre"]?.ToString()
-                });
-            }
-
-            return lista;
-        }
-
-        public List<ComboItem> ObtenerBalances()
-        {
-            var lista = new List<ComboItem>();
-
-            using var cn = DbConnectionFactory.Create();
-            cn.Open();
-
-            string sql = @"SELECT id_balance, nombre FROM balance ORDER BY id_balance;";
-
-            using var cmd = new NpgsqlCommand(sql, cn);
-            using var dr = cmd.ExecuteReader();
-
-            while (dr.Read())
-            {
-                lista.Add(new ComboItem
-                {
-                    Id = Convert.ToInt32(dr["id_balance"]),
-                    Nombre = dr["nombre"]?.ToString()
-                });
-            }
-
-            return lista;
-        }
-
         public List<CuentaPadreItem> ObtenerCuentasPadre()
         {
             var lista = new List<CuentaPadreItem>();

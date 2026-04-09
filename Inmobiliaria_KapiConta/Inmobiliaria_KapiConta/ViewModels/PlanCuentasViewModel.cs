@@ -12,6 +12,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
     public class PlanCuentasViewModel : INotifyPropertyChanged 
     {
         private readonly PlanCuentasService _service;
+        private readonly ElementoService _elementoService;
+        private readonly BalanceService _balanceService;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -75,18 +77,26 @@ namespace Inmobiliaria_KapiConta.ViewModels
             set { _codigoPadre = value; OnPropertyChanged(); }
         }
 
-        private int? _idElemento;
-        public int? IdElemento
+        private Elemento _elementoSeleccionado;
+        public Elemento ElementoSeleccionado
         {
-            get => _idElemento;
-            set { _idElemento = value; OnPropertyChanged(); }
+            get => _elementoSeleccionado;
+            set
+            {
+                _elementoSeleccionado = value;
+                OnPropertyChanged();
+            }
         }
 
-        private int? _idBalance;
-        public int? IdBalance
+        private Balance _balanceSeleccionado;
+        public Balance BalanceSeleccionado
         {
-            get => _idBalance;
-            set { _idBalance = value; OnPropertyChanged(); }
+            get => _balanceSeleccionado;
+            set
+            {
+                _balanceSeleccionado = value;
+                OnPropertyChanged();
+            }
         }
 
         private bool _analisis;
@@ -107,8 +117,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // COMBOS
         // =========================
 
-        public ObservableCollection<ComboItem> Elementos { get; set; } = new();
-        public ObservableCollection<ComboItem> Balances { get; set; } = new();
+        public ObservableCollection<Elemento> Elementos { get; set; } = new();
+        public ObservableCollection<Balance> Balances { get; set; } = new();
         public ObservableCollection<CuentaPadreItem> CuentasPadre { get; set; } = new();
 
         // =========================
@@ -137,6 +147,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public PlanCuentasViewModel(int empresaId)
         {
             _service = new PlanCuentasService(empresaId);
+            _elementoService = new ElementoService();
+            _balanceService = new BalanceService();
 
             AgregarCommand = new RelayCommand(Agregar);
             ModificarCommand = new RelayCommand(Modificar, () => CuentaSeleccionada != null);
@@ -157,8 +169,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public void CargarInicial()
         {
             PlanCuentas = new ObservableCollection<PlanCuentaItem>(_service.ObtenerPlanCuentas());
-            Elementos = new ObservableCollection<ComboItem>(_service.ObtenerElementos());
-            Balances = new ObservableCollection<ComboItem>(_service.ObtenerBalances());
+            Elementos = new ObservableCollection<Elemento>(_elementoService.ObtenerElementos());
+            Balances = new ObservableCollection<Balance>(_balanceService.ObtenerBalances());
             CuentasPadre = new ObservableCollection<CuentaPadreItem>(_service.ObtenerCuentasPadre());
 
             OnPropertyChanged(nameof(PlanCuentas));
@@ -178,8 +190,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
             Codigo = CuentaSeleccionada.Codigo;
             Descripcion = CuentaSeleccionada.Descripcion;
             CodigoPadre = CuentaSeleccionada.CodigoPadre;
-            IdElemento = CuentaSeleccionada.IdElemento;
-            IdBalance = CuentaSeleccionada.IdBalance;
+            ElementoSeleccionado = Elementos.FirstOrDefault(x => x.IdElemento == CuentaSeleccionada.IdElemento);
+            BalanceSeleccionado = Balances.FirstOrDefault(x => x.IdBalance == CuentaSeleccionada.IdBalance);
             Analisis = CuentaSeleccionada.Analisis;
 
             // 🔹 AQUÍ ESTÁ LO IMPORTANTE
@@ -214,7 +226,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     return;
                 }
 
-                if (IdElemento == null)
+                if (ElementoSeleccionado == null)
                 {
                     System.Windows.MessageBox.Show("Selecciona el elemento.");
                     return;
@@ -237,8 +249,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     Descripcion = Descripcion,
                     Nivel = Nivel,
                     CodigoPadre = CodigoPadre,
-                    IdElemento = IdElemento.Value,
-                    IdBalance = IdBalance,
+                    IdElemento = ElementoSeleccionado.IdElemento,
+                    IdBalance = BalanceSeleccionado?.IdBalance,
                     Analisis = Analisis
                 });
 
@@ -291,7 +303,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     return;
                 }
 
-                if (IdElemento == null)
+                if (ElementoSeleccionado == null)
                 {
                     System.Windows.MessageBox.Show("Selecciona el elemento.");
                     return;
@@ -312,8 +324,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     Descripcion = Descripcion,
                     Nivel = Nivel,
                     CodigoPadre = CodigoPadre,
-                    IdElemento = IdElemento.Value,
-                    IdBalance = IdBalance,
+                    IdElemento = ElementoSeleccionado.IdElemento,
+                    IdBalance = BalanceSeleccionado?.IdBalance,
                     Analisis = Analisis
                 });
 
@@ -381,8 +393,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
             Descripcion = "";
             Nivel = 0;
             CodigoPadre = null;
-            IdElemento = null;
-            IdBalance = null;
+            ElementoSeleccionado = null;
+            BalanceSeleccionado = null;
             Analisis = false;
             TieneAutomatizacion = false;
             Automatizacion.Clear();

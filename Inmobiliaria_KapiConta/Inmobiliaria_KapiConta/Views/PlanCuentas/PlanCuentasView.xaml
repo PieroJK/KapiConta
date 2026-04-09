@@ -314,14 +314,14 @@
 
                             <ComboBox 
                                   ItemsSource="{Binding Elementos}"
-                                  SelectedValue="{Binding IdElemento}"
+                                  SelectedItem="{Binding ElementoSeleccionado}"
                                   Grid.Row="0"
                                   Grid.Column="1"
                                   Height="38"
                                   Background="#DDDDDD"
                                   BorderThickness="0"
                                   DisplayMemberPath="Nombre"
-                                  SelectedValuePath="Id"/>
+                                  SelectedValuePath="IdElemento"/>
 
                             <TextBlock Text="Balance"
                                    Grid.Row="2"
@@ -330,14 +330,14 @@
 
                             <ComboBox 
                                   ItemsSource="{Binding Balances}"
-                                  SelectedValue="{Binding IdBalance}"
+                                  SelectedItem="{Binding BalanceSeleccionado}"
                                   Grid.Row="2"
                                   Grid.Column="1"
                                   Height="38"
                                   Background="#DDDDDD"
                                   BorderThickness="0"
                                   DisplayMemberPath="Nombre"
-                                  SelectedValuePath="Id"/>
+                                  SelectedValuePath="IdBalance"/>
                         </Grid>
                     </Grid>
 
