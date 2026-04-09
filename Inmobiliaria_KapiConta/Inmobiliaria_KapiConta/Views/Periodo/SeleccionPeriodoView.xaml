@@ -3,37 +3,69 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Grid Background="#149191">
-        <Border Width="500"
+        <Button Content="←"
+                Width="40"
+                Height="40"
+                FontSize="20"
+                Background="Transparent"
+                Foreground="White"
+                BorderThickness="0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="15"
+                Cursor="Hand"
+                Opacity="0.8"
+                Command="{Binding VolverCommand}"/>
+        
+        <Border Width="400"
                 Padding="30"
                 CornerRadius="20"
-                Background="#DDDDDD"
+                Background="#5A3E2B"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
 
             <StackPanel>
                 <TextBlock Text="SELECCIONAR PERIODO"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,25"/>
+                       FontSize="28"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,25"
+                       Foreground="White"/>
 
-                <TextBlock Text="Periodo"
-                           FontSize="16"
-                           Margin="0,0,0,10"/>
-
-                <ComboBox Height="35"
-                          ItemsSource="{Binding Periodos}"
+                <DataGrid ItemsSource="{Binding Periodos}"
                           SelectedItem="{Binding PeriodoSeleccionado}"
-                          DisplayMemberPath="Anio"/>
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="None"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          CanUserAddRows="False"
+                          Height="250"
+                          MouseDoubleClick="DataGrid_MouseDoubleClick">
 
-                <Button Content="INGRESAR"
-                        Height="40"
-                        Margin="0,25,0,0"
-                        Background="#F05A28"
-                        Foreground="White"
-                        FontWeight="Bold"
-                        BorderThickness="0"
-                        Command="{Binding ContinuarCommand}"/>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Anio}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- 🔥 BOTONES NUEVOS -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="76" Width="340">
+
+                    <Button Content="Registrar Nuevo Periodo"
+                                     Width="160"
+                                     Height="45"
+                                     Margin="0,20,10,0"
+                                     Background="#3498DB"
+                                     Foreground="White"
+                                     FontWeight="Bold" />
+
+                    <Button Content="Modificar Periodo"
+                                     Width="171"
+                                     Height="44"
+                                     Margin="0,20,10,0"
+                                     Background="#F39C12"
+                                     Foreground="White"
+                                     FontWeight="Bold"/>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>

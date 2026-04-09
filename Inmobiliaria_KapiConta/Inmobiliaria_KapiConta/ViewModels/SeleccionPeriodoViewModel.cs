@@ -20,6 +20,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _periodoService = new PeriodoService();
 
             ContinuarCommand = new RelayCommand(Continuar);
+            VolverCommand = new RelayCommand(Volver);
 
             CargarPeriodos();
         }
@@ -41,6 +42,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         }
 
         public ICommand ContinuarCommand { get; }
+
+        public ICommand VolverCommand { get; }
 
         private void CargarPeriodos()
         {
@@ -67,6 +70,15 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
             // 👉 Ir al dashboard
             _mainVM.Navigation.NavigateTo(new DashboardViewModel(_mainVM));
+        }
+
+        private void Volver()
+        {
+            Session.CurrentEmpresa = null;
+            Session.CurrentPeriodo = null;
+
+            // 🔙 Navegar a login
+            _mainVM.Navigation.NavigateTo(new SeleccionEmpresaViewModel(_mainVM));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

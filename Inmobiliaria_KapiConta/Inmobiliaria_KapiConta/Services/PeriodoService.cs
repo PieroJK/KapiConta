@@ -1,4 +1,6 @@
 ﻿using Inmobiliaria_KapiConta.Data;
+using Inmobiliaria_KapiConta.Data.Mappings;
+using Inmobiliaria_KapiConta.Data.Queries;
 using Inmobiliaria_KapiConta.Models;
 using Npgsql;
 
@@ -13,24 +15,16 @@ namespace Inmobiliaria_KapiConta.Services
             using var conn = DbConnectionFactory.Create();
             conn.Open();
 
-            string sql = @"
-                SELECT id_periodo, anio
-                FROM periodo
-                WHERE id_empresa = @id_empresa
-                ORDER BY anio DESC;";
-
-            using var cmd = new NpgsqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@id_empresa", idEmpresa);
+            // 🔥 Usamos el Query centralizado
+            using var cmd = new NpgsqlCommand(PeriodoQueries.Listar, conn);
+            cmd.Parameters.AddWithValue("@idEmpresa", idEmpresa);
 
             using var reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                lista.Add(new Periodo
-                {
-                    IdPeriodo = Convert.ToInt32(reader["id_periodo"]),
-                    Anio = Convert.ToInt32(reader["anio"])
-                });
+                // 🔥 Usamos el Mapper
+                lista.Add(PeriodoMapper.Map(reader));
             }
 
             return lista;
