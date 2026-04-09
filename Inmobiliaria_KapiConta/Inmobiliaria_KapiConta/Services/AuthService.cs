@@ -10,23 +10,27 @@ namespace Inmobiliaria_KapiConta.Services
     {
         public Usuario Login(string usuario, string password)
         {
-            using var conn = DbConnectionFactory.Create();
-            conn.Open();
+          using var conn = DbConnectionFactory.Create();
+          conn.Open();
 
-            using var cmd = new NpgsqlCommand(AuthQueries.LoginQuery, conn);
-            cmd.Parameters.AddWithValue("@usuario", usuario);
+          using var cmd = new NpgsqlCommand(AuthQueries.LoginQuery, conn);
+          cmd.Parameters.AddWithValue("@usuario", usuario);
 
-            using var reader = cmd.ExecuteReader();
+          using var reader = cmd.ExecuteReader();
 
-            if (!reader.Read())
-                return null;
+          if (!reader.Read())
+          return null;
 
-            var user = UsuarioMapper.Map(reader);
+          var user = UsuarioMapper.Map(reader);
 
-            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-                return null;
+          // ?? Detectar hash inválido SIN excepción
+                 if (string.IsNullOrEmpty(user.PasswordHash) || !user.PasswordHash.StartsWith("$2"))
+          throw new Exception("HASH_INVALIDO");
 
-            return user;
+          if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+          return null;
+
+          return user;
         }
     }
 }

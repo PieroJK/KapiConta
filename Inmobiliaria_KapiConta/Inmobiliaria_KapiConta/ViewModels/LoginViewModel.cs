@@ -87,21 +87,32 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 return;
 
             var authService = new AuthService();
-            Usuario user = authService.Login(Usuario, Password);
 
-            if (user != null)
+            try
             {
-                Session.CurrentUser = user;
+                Usuario user = authService.Login(Usuario, Password);
 
-                ErrorPassword = "";
-                ErrorUsuario = "";
+                if (user != null)
+                {
+                    Session.CurrentUser = user;
 
-                // ?? AQUÍ EL CAMBIO IMPORTANTE
-                _mainVM.Navigation.NavigateTo(new SeleccionEmpresaViewModel(_mainVM));
+                    ErrorPassword = "";
+                    ErrorUsuario = "";
+
+                    // ?? Navegación
+                    _mainVM.Navigation.NavigateTo(new SeleccionEmpresaViewModel(_mainVM));
+                }
+                else
+                {
+                    ErrorPassword = "Credenciales incorrectas";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ErrorPassword = "Credenciales incorrectas";
+                if (ex.Message == "HASH_INVALIDO")
+                    ErrorPassword = "La contraseña no está encriptada.";
+                else
+                    ErrorPassword = "Error inesperado";
             }
         }
 

@@ -1,6 +1,9 @@
 ﻿using Inmobiliaria_KapiConta.Data;
 using Inmobiliaria_KapiConta.Models;
+using Inmobiliaria_KapiConta.Data.Queries;
+using Inmobiliaria_KapiConta.Data.Mappings;
 using Npgsql;
+
 
 namespace Inmobiliaria_KapiConta.Services
 {
@@ -13,21 +16,17 @@ namespace Inmobiliaria_KapiConta.Services
             using var conn = DbConnectionFactory.Create();
             conn.Open();
 
-            string sql = @"SELECT id_empresa, nombre FROM empresa ORDER BY nombre;";
-
-            using var cmd = new NpgsqlCommand(sql, conn);
+            using var cmd = new NpgsqlCommand(EmpresaQueries.Listar, conn);
             using var reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                lista.Add(new Empresa
-                {
-                    IdEmpresa = Convert.ToInt32(reader["id_empresa"]),
-                    Nombre = reader["nombre"]?.ToString() ?? ""
-                });
+                lista.Add(EmpresaMapper.Map(reader));
             }
 
             return lista;
         }
+
+
     }
 }

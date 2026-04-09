@@ -18,11 +18,9 @@ namespace Inmobiliaria_KapiConta.Data.Mappings
                 Rol = new RolUsuario
                 {
                     IdRol = (int)reader["id_rol"],
-                    Nombre = reader["rol_nombre"].ToString(),
-                    Descripcion = reader["descripcion"].ToString(),
-                    Estado = (bool)reader["rol_estado"]
+                    Nombre = reader["rol_nombre"].ToString()
                 }
             };
-        }
+        }   
     }
 }

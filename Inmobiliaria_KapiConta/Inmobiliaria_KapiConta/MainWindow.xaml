@@ -7,8 +7,6 @@
         xmlns:local="clr-namespace:Inmobiliaria_KapiConta"
         mc:Ignorable="d"
         Title="KapiConta"
-        
-        
 
         Width="{Binding WindowWidth}"
         Height="{Binding WindowHeight}"
