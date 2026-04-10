@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Inmobiliaria_KapiConta.ViewModels
@@ -14,6 +15,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         private readonly PlanCuentasService _service;
         private readonly ElementoService _elementoService;
         private readonly BalanceService _balanceService;
+        private readonly AutomatizacionService _automatizacionService;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -149,6 +151,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _service = new PlanCuentasService(empresaId);
             _elementoService = new ElementoService();
             _balanceService = new BalanceService();
+            _automatizacionService = new AutomatizacionService();
 
             AgregarCommand = new RelayCommand(Agregar);
             ModificarCommand = new RelayCommand(Modificar, () => CuentaSeleccionada != null);
@@ -195,13 +198,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
             Analisis = CuentaSeleccionada.Analisis;
 
             // 🔹 AQUÍ ESTÁ LO IMPORTANTE
-            var result = _service.ObtenerAutomatizacion(CuentaSeleccionada.IdPlanCuenta);
+            CargarAutomatizacion(CuentaSeleccionada.IdPlanCuenta);
 
-            Automatizacion = new ObservableCollection<AutomatizacionDetalleItem>(result.lista);
-            TieneAutomatizacion = result.estado;
-
-            OnPropertyChanged(nameof(Automatizacion));
-            OnPropertyChanged(nameof(TieneAutomatizacion));
+            
         }
 
         // =========================
@@ -386,6 +385,19 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // UTILS
         // =========================
 
+        private void CargarAutomatizacion(int idPlanCuenta)
+        {
+            var result = _automatizacionService.Obtener(idPlanCuenta);
+
+            Automatizacion = new ObservableCollection<AutomatizacionDetalleItem>(
+                result.lista.Select(AutomatizacionMapper.ToItem)
+            );
+
+            TieneAutomatizacion = result.estado;
+
+            OnPropertyChanged(nameof(Automatizacion));
+            OnPropertyChanged(nameof(TieneAutomatizacion));
+        }
         private void Limpiar()
         {
             CuentaSeleccionada = null;
@@ -428,73 +440,41 @@ namespace Inmobiliaria_KapiConta.ViewModels
             {
                 if (CuentaSeleccionada == null)
                 {
-                    System.Windows.MessageBox.Show("Selecciona una cuenta.");
+                    MessageBox.Show("Selecciona una cuenta.");
                     return;
                 }
 
-                // 🔴 SI ESTA DESACTIVADO → NO VALIDAR DETALLE
+                // 🔴 DESACTIVAR
                 if (!TieneAutomatizacion)
                 {
-                    _service.GuardarAutomatizacion(
+                    _automatizacionService.Guardar(
                         CuentaSeleccionada.IdPlanCuenta,
-                        new List<AutomatizacionDetalleItem>(),
+                        new List<CuentaAutomatizacionDetalle>(),
                         false
                     );
 
-                    System.Windows.MessageBox.Show("Automatización desactivada.");
+                    MessageBox.Show("Automatización desactivada.");
                     return;
                 }
 
-                // 🔹 VALIDACIONES SOLO SI ESTA ACTIVO
-                if (Automatizacion.Count == 0)
-                {
-                    System.Windows.MessageBox.Show("Agrega al menos una cuenta.");
-                    return;
-                }
+                var detalles = Automatizacion
+                    .Select(AutomatizacionMapper.ToEntity)
+                    .ToList();
 
-                decimal totalDebe = Automatizacion
-                    .Where(x => x.TipoMovimiento == "D")
-                    .Sum(x => x.Porcentaje);
+                // 🔥 VALIDACIÓN AHORA EN SERVICE
+                _automatizacionService.Validar(detalles);
 
-                decimal totalHaber = Automatizacion
-                    .Where(x => x.TipoMovimiento == "H")
-                    .Sum(x => x.Porcentaje);
-
-                if (totalDebe <= 0)
-                {
-                    System.Windows.MessageBox.Show("Debe existir al menos una línea en Debe.");
-                    return;
-                }
-
-                if (totalHaber <= 0)
-                {
-                    System.Windows.MessageBox.Show("Debe existir al menos una línea en Haber.");
-                    return;
-                }
-
-                if (totalDebe != 100m)
-                {
-                    System.Windows.MessageBox.Show($"Debe = 100. Actual: {totalDebe}");
-                    return;
-                }
-
-                if (totalHaber != 100m)
-                {
-                    System.Windows.MessageBox.Show($"Haber = 100. Actual: {totalHaber}");
-                    return;
-                }
-
-                _service.GuardarAutomatizacion(
+                _automatizacionService.Guardar(
                     CuentaSeleccionada.IdPlanCuenta,
-                    Automatizacion.ToList(),
+                    detalles,
                     true
                 );
 
-                System.Windows.MessageBox.Show("Automatización guardada correctamente.");
+                MessageBox.Show("Automatización guardada correctamente.");
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
         private int CalcularNivelDesdeCodigo(string codigo)

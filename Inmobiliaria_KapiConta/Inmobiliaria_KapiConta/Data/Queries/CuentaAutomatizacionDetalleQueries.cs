@@ -6,6 +6,7 @@
         public static string Listar = @"
             SELECT 
                 cad.id_detalle,
+                cad.id_automatizacion, -- 🔥 AQUÍ ESTÁ LA CORRECCIÓN
                 cad.id_cuenta_relacionada,
                 pc.codigo,
                 pc.descripcion,
