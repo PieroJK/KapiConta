@@ -16,7 +16,7 @@ namespace Inmobiliaria_KapiConta.Data.Mappings
                                         : null,
                 Codigo = reader["codigo"]?.ToString() ?? string.Empty,
                 Descripcion = reader["descripcion"]?.ToString() ?? string.Empty,
-                Nivel = reader["nivel"]?.ToString() ?? string.Empty,
+                Nivel = Convert.ToInt32(reader["nivel"]),
                 CodigoPadre = reader["codigo_padre"]?.ToString(),
                 IdElemento = (int)reader["id_elemento"],
                 IdBalance = reader["id_balance"] != DBNull.Value
@@ -68,6 +68,8 @@ namespace Inmobiliaria_KapiConta.Data.Mappings
                     Descripcion = reader["base_descripcion"]?.ToString() ?? string.Empty
                 };
             }
+
+
 
             return plan;
         }

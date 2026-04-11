@@ -27,8 +27,9 @@
                 Background="#F2F2F2"
                 BorderBrush="Black"
                 BorderThickness="2">
-                <DataGrid x:Name="dgPlanCuentas"
+                <DataGrid 
                   AutoGenerateColumns="False"
+                  IsReadOnly="True"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   CanUserResizeRows="False"

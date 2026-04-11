@@ -29,7 +29,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:PlanCuentasViewModel}">
-            <placuentasViews:PlanCuentasView />
+            <placuentasViews:PlanCuentasView/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:TerceroViewModel}">

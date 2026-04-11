@@ -1,4 +1,5 @@
-﻿using Inmobiliaria_KapiConta.Models;
+﻿using Inmobiliaria_KapiConta.Data.Mappings;
+using Inmobiliaria_KapiConta.Models;
 using Inmobiliaria_KapiConta.Services;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Inmobiliaria_KapiConta.ViewModels
@@ -26,10 +28,19 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // PROPIEDADES PRINCIPALES
         // =========================
 
-        public ObservableCollection<PlanCuentaItem> PlanCuentas { get; set; } = new();
+        private ObservableCollection<PlanCuenta> _planCuentas;
+        public ObservableCollection<PlanCuenta> PlanCuentas
+        {
+            get => _planCuentas;
+            set
+            {
+                _planCuentas = value;
+                OnPropertyChanged();
+            }
+        }
 
-        private PlanCuentaItem _cuentaSeleccionada;
-        public PlanCuentaItem CuentaSeleccionada
+        private PlanCuenta _cuentaSeleccionada;
+        public PlanCuenta CuentaSeleccionada
         {
             get => _cuentaSeleccionada;
             set
@@ -52,6 +63,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
             get => _codigo;
             set
             {
+                if (_codigo == value) return;
+
                 _codigo = value;
                 Nivel = CalcularNivelDesdeCodigo(value);
                 OnPropertyChanged();
@@ -121,7 +134,17 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ObservableCollection<Elemento> Elementos { get; set; } = new();
         public ObservableCollection<Balance> Balances { get; set; } = new();
-        public ObservableCollection<CuentaPadreItem> CuentasPadre { get; set; } = new();
+
+        private ObservableCollection<PlanCuenta> _cuentasPadre;
+        public ObservableCollection<PlanCuenta> CuentasPadre
+        {
+            get => _cuentasPadre;
+            set
+            {
+                _cuentasPadre = value;
+                OnPropertyChanged();
+            }
+        }
 
         // =========================
         // AUTOMATIZACIÓN
@@ -171,21 +194,26 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public void CargarInicial()
         {
-            PlanCuentas = new ObservableCollection<PlanCuentaItem>(_service.ObtenerPlanCuentas());
-            Elementos = new ObservableCollection<Elemento>(_elementoService.ObtenerElementos());
-            Balances = new ObservableCollection<Balance>(_balanceService.ObtenerBalances());
-            CuentasPadre = new ObservableCollection<CuentaPadreItem>(_service.ObtenerCuentasPadre());
-
-            OnPropertyChanged(nameof(PlanCuentas));
-            OnPropertyChanged(nameof(Elementos));
-            OnPropertyChanged(nameof(Balances));
-            OnPropertyChanged(nameof(CuentasPadre));
+            CargarDatos();
+            CargarCombos();
         }
 
         // =========================
         // SELECCIÓN
         // =========================
 
+        private void CargarDatos()
+        {
+            var lista = _service.ObtenerPlanCuentas();
+            PlanCuentas = new ObservableCollection<PlanCuenta>(lista);
+            CuentasPadre = new ObservableCollection<PlanCuenta>(lista);
+        }
+
+        private void CargarCombos()
+        {
+            Elementos = new ObservableCollection<Elemento>(_elementoService.ObtenerElementos());
+            Balances = new ObservableCollection<Balance>(_balanceService.ObtenerBalances());
+        }
         private void CargarDetalleSeleccionado()
         {
             if (CuentaSeleccionada == null) return;
@@ -200,7 +228,6 @@ namespace Inmobiliaria_KapiConta.ViewModels
             // 🔹 AQUÍ ESTÁ LO IMPORTANTE
             CargarAutomatizacion(CuentaSeleccionada.IdPlanCuenta);
 
-            
         }
 
         // =========================
@@ -211,56 +238,60 @@ namespace Inmobiliaria_KapiConta.ViewModels
         {
             try
             {
-                // ❗ VALIDACIONES (equivalentes a tu código anterior)
-
                 if (string.IsNullOrWhiteSpace(Codigo))
                 {
-                    System.Windows.MessageBox.Show("Ingresa el código.");
+                    MessageBox.Show("Ingresa el código.");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(Descripcion))
                 {
-                    System.Windows.MessageBox.Show("Ingresa la descripción.");
+                    MessageBox.Show("Ingresa la descripción.");
                     return;
                 }
 
                 if (ElementoSeleccionado == null)
                 {
-                    System.Windows.MessageBox.Show("Selecciona el elemento.");
+                    MessageBox.Show("Selecciona el elemento.");
                     return;
                 }
 
-                // ⚠ Antes usabas ComboBox (Sí/No), ahora es bool
-                // así que no necesitas validar SelectedIndex
-
-                // ❗ VALIDAR SI YA EXISTE
                 if (_service.ExisteCodigo(Codigo))
                 {
-                    System.Windows.MessageBox.Show("Ya existe una cuenta con ese código.");
+                    MessageBox.Show("Ya existe una cuenta con ese código.");
                     return;
                 }
 
-                //  INSERTAR
-                _service.InsertarCuenta(new PlanCuentaItem
+                var entity = new PlanCuenta
                 {
                     Codigo = Codigo,
                     Descripcion = Descripcion,
                     Nivel = Nivel,
-                    CodigoPadre = CodigoPadre,
+                    CodigoPadre = string.IsNullOrWhiteSpace(CodigoPadre) ? null : CodigoPadre,
                     IdElemento = ElementoSeleccionado.IdElemento,
                     IdBalance = BalanceSeleccionado?.IdBalance,
                     Analisis = Analisis
-                });
+                };
 
-                // RECARGAR
-                Refrescar();
+                var nuevaCuenta = _service.InsertarCuenta(entity);
 
-                System.Windows.MessageBox.Show("Cuenta agregada correctamente.");
+                if (nuevaCuenta == null || nuevaCuenta.IdPlanCuenta == 0)
+                {
+                    MessageBox.Show("Error: la cuenta no fue devuelta por el servicio.");
+                    return;
+                }
+
+                // ✅ Recargar desde BD (garantiza consistencia total)
+                CargarDatos();
+
+                // ✅ Seleccionar la cuenta recién insertada
+                CuentaSeleccionada = PlanCuentas.FirstOrDefault(x => x.IdPlanCuenta == nuevaCuenta.IdPlanCuenta);
+
+                MessageBox.Show("Cuenta agregada correctamente.");
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Error al agregar: " + ex.Message);
+                MessageBox.Show("Error al agregar: " + ex.Message);
             }
         }
 
@@ -316,7 +347,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 }
 
                 // MODIFICAR
-                _service.ModificarCuenta(new PlanCuentaItem
+                var entity = new PlanCuenta
                 {
                     IdPlanCuenta = CuentaSeleccionada.IdPlanCuenta,
                     Codigo = Codigo,
@@ -326,9 +357,18 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     IdElemento = ElementoSeleccionado.IdElemento,
                     IdBalance = BalanceSeleccionado?.IdBalance,
                     Analisis = Analisis
-                });
+                };
 
-                Refrescar();
+                int idModificado = CuentaSeleccionada.IdPlanCuenta;
+
+                _service.ModificarCuenta(entity);
+
+                // ✅ Recargar desde BD (misma solución que Agregar)
+                CargarDatos();
+
+                // ✅ Volver a seleccionar la cuenta modificada
+                CuentaSeleccionada = PlanCuentas.FirstOrDefault(x => x.IdPlanCuenta == idModificado);
+
 
                 System.Windows.MessageBox.Show("Cuenta modificada correctamente.");
             }
@@ -365,7 +405,10 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
                 _service.EliminarCuenta(CuentaSeleccionada.IdPlanCuenta);
 
-                Refrescar();
+                PlanCuentas.Remove(CuentaSeleccionada);
+                CuentasPadre.Remove(CuentaSeleccionada);
+
+                Limpiar();
 
                 System.Windows.MessageBox.Show("Cuenta eliminada correctamente.");
             }

@@ -84,7 +84,7 @@
                 <!-- 🔥 ESTA PARTE FALTABA -->
                 <TabControl.ContentTemplate>
                     <DataTemplate>
-                        <ContentPresenter Content="{Binding Contenido}"/>
+                        <ContentControl Content="{Binding Contenido}"/>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
 

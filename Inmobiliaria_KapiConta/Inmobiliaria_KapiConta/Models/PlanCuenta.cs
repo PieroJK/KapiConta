@@ -16,7 +16,7 @@
 
         public string Descripcion { get; set; } = string.Empty;
 
-        public string Nivel { get; set; } = string.Empty;
+        public int Nivel { get; set; }
 
         // 🔥 Autorreferencia (padre dentro de la misma empresa)
         public string? CodigoPadre { get; set; }

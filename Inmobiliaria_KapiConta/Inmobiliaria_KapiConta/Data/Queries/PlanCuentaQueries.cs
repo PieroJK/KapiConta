@@ -4,12 +4,19 @@
     {
         // 🔍 VALIDAR EXISTENCIA DE CÓDIGO
         public static string ExisteCodigo = @"
-            SELECT COUNT(*)
-            FROM plan_cuenta
-            WHERE id_empresa = @idEmpresa
-              AND codigo = @codigo
-              AND (@idExcluir IS NULL OR id_plan_cuenta <> @idExcluir);
-        ";
+    SELECT COUNT(*)
+    FROM plan_cuenta
+    WHERE id_empresa = @idEmpresa
+      AND codigo = @codigo;
+";
+
+        public static string ExisteCodigoExcluyendo = @"
+    SELECT COUNT(*)
+    FROM plan_cuenta
+    WHERE id_empresa = @idEmpresa
+      AND codigo = @codigo
+      AND id_plan_cuenta <> @idExcluir;
+";
 
         // 🔍 LISTAR CUENTAS
         public static string Listar = @"
@@ -33,25 +40,17 @@
             ORDER BY codigo;
         ";
 
-        // 🔍 CUENTAS PADRE (para combos)
-        public static string ListarPadres = @"
-            SELECT codigo, descripcion
-            FROM plan_cuenta
-            WHERE id_empresa = @idEmpresa
-              AND estado = true
-            ORDER BY codigo;
-        ";
-
         // ➕ INSERTAR
         public static string Insertar = @"
             INSERT INTO plan_cuenta
-            (id_empresa, id_plan_cuenta_base, codigo, descripcion, nivel,
-             codigo_padre, id_elemento, id_balance, analisis,
-             es_base, tiene_automatizacion, estado)
-            VALUES
-            (@idEmpresa, @idPlanCuentaBase, @codigo, @descripcion, @nivel,
-             @codigoPadre, @idElemento, @idBalance, @analisis,
-             false, false, true);
+(id_empresa, id_plan_cuenta_base, codigo, descripcion, nivel,
+ codigo_padre, id_elemento, id_balance, analisis,
+ es_base, tiene_automatizacion, estado)
+VALUES
+(@idEmpresa, @idPlanCuentaBase, @codigo, @descripcion, @nivel,
+ @codigoPadre, @idElemento, @idBalance, @analisis,
+ false, false, true)
+RETURNING *;
         ";
 
         // ✏️ ACTUALIZAR
@@ -82,5 +81,7 @@
             SET tiene_automatizacion = @estado
             WHERE id_plan_cuenta = @id;
         ";
+
+
     }
 }
