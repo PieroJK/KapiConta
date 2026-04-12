@@ -26,26 +26,59 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
-            <!-- 🔝 MENU -->
+            
+
+            <!-- MENU -->
             <Menu Grid.Row="0" Background="#DDDDDD">
 
-                <MenuItem Header="Empresas"></MenuItem>
+                <Menu.Resources>
+                    <!-- Estilo del header principal -->
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Background" Value="#DDDDDD"/>
+                        <Setter Property="Padding" Value="12,6"/>
+                        <Setter Property="FontSize" Value="16"/>
+                    </Style>
+
+                    <!-- Estilo de las opciones del submenú -->
+                    <Style x:Key="SubMenuItemStyle" TargetType="MenuItem">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="#B38757"/>
+                        <Setter Property="Padding" Value="12,8"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="BorderBrush" Value="#6E5337"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter Property="Background" Value="#9F764C"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Menu.Resources>
+                
+                <MenuItem Header="Empresas">
+                    <MenuItem Header="Registrar nueva empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Listado empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Registrar usuario" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Listado usuario" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Ingresar nueva empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                </MenuItem>
                 <MenuItem Header="Procesos">
-                    <MenuItem Header="Ingresar Asiento"></MenuItem>
-                    <MenuItem Header="Importar Asiento"></MenuItem>
+                    <MenuItem Header="Ingresar Asiento" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Importar Asiento" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
                 </MenuItem>
                 
                 <MenuItem Header="Registro" Click="MenuItem_Click">
 
-                    <MenuItem Header="Plan de Cuentas"
+                    <MenuItem Header="Plan de Cuentas" Style="{StaticResource SubMenuItemStyle}"
                           Command="{Binding PlanCuentasCommand}"/>
 
-                    <MenuItem Header="Terceros">
+                    <MenuItem Header="Terceros" Style="{StaticResource SubMenuItemStyle}">
 
-                        <MenuItem Header="Registrar Terceros"
+                        <MenuItem Header="Registrar Terceros" Style="{StaticResource SubMenuItemStyle}"
                               Command="{Binding RegistrarTercerosCommand}"/>
 
-                        <MenuItem Header="Listado Terceros"
+                        <MenuItem Header="Listado Terceros" Style="{StaticResource SubMenuItemStyle}"
                               Command="{Binding ListadoTercerosCommand}"/>
 
                     </MenuItem>
