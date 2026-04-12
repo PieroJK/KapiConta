@@ -13,34 +13,60 @@
         <Grid Grid.Column="0" Margin="14">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <!-- Buscador -->
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
 
             <TextBlock Text="Plan de Cuentas"
-                   Foreground="White"
-                   FontSize="26"
-                   FontWeight="SemiBold"
-                   Margin="6,0,0,16"/>
+               Foreground="White"
+               FontSize="26"
+               FontWeight="SemiBold"
+               Margin="6,0,0,16"/>
 
-            <Border Grid.Row="1"
-                Background="#F2F2F2"
-                BorderBrush="Black"
-                BorderThickness="2">
+            <!-- BUSCADOR -->
+            <Grid Grid.Row="1" Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="🔍"
+                   VerticalAlignment="Center"
+                   Foreground="White"
+                   FontSize="16"
+                   Margin="0,0,8,0"/>
+
+                <TextBox Grid.Column="1"
+                 Height="32"
+                 Background="#DDDDDD"
+                 BorderThickness="0"
+                 VerticalContentAlignment="Center"
+                 Padding="6,0"
+                 FontSize="13"
+                 Text="{Binding TextoBusqueda, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+
+            <Border Grid.Row="2"
+            Background="#F2F2F2"
+            BorderBrush="Black"
+            BorderThickness="2">
+
                 <DataGrid 
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  CanUserResizeRows="False"
-                  HeadersVisibility="Column"
-                  GridLinesVisibility="All"
-                  SelectionMode="Single"
-                  SelectionUnit="FullRow"
-                  RowHeight="28"
-                  FontSize="12"
-                  ItemsSource="{Binding PlanCuentas}"
-                  SelectedItem="{Binding CuentaSeleccionada, Mode=TwoWay}">
+            AutoGenerateColumns="False"
+            IsReadOnly="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserResizeRows="False"
+            HeadersVisibility="Column"
+            GridLinesVisibility="All"
+            SelectionMode="Single"
+            SelectionUnit="FullRow"
+            RowHeight="28"
+            FontSize="12"
+            ItemsSource="{Binding PlanCuentas}"
+            SelectedItem="{Binding CuentaSeleccionada, Mode=TwoWay}">
 
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">

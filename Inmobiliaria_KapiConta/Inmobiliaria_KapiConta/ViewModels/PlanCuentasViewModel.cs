@@ -52,6 +52,35 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 (EliminarCommand as RelayCommand)?.RaiseCanExecuteChanged();
             }
         }
+        // =========================
+        // BÚSQUEDA
+        // =========================
+
+        private string _textoBusqueda;
+        public string TextoBusqueda
+        {
+            get => _textoBusqueda;
+            set
+            {
+                _textoBusqueda = value;
+                OnPropertyChanged();
+                // ✅ Aplicar filtro en tiempo real
+                CollectionViewSource.GetDefaultView(PlanCuentas)?.Refresh();
+            }
+        }
+
+        // ✅ Llamar esto después de asignar PlanCuentas en CargarDatos()
+        private void AplicarFiltro()
+        {
+            var view = CollectionViewSource.GetDefaultView(PlanCuentas);
+            view.Filter = item =>
+            {
+                if (string.IsNullOrWhiteSpace(TextoBusqueda)) return true;
+                var cuenta = item as PlanCuenta;
+                return cuenta.Codigo.Contains(TextoBusqueda, StringComparison.OrdinalIgnoreCase)
+                    || cuenta.Descripcion.Contains(TextoBusqueda, StringComparison.OrdinalIgnoreCase);
+            };
+        }
 
         // =========================
         // FORMULARIO
@@ -207,6 +236,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
             var lista = _service.ObtenerPlanCuentas();
             PlanCuentas = new ObservableCollection<PlanCuenta>(lista);
             CuentasPadre = new ObservableCollection<PlanCuenta>(lista);
+            AplicarFiltro(); // ✅ Siempre aplicar tras recargar
         }
 
         private void CargarCombos()
@@ -427,6 +457,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // =========================
         // UTILS
         // =========================
+
 
         private void CargarAutomatizacion(int idPlanCuenta)
         {
