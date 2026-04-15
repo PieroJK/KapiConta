@@ -32,6 +32,10 @@
             <placuentasViews:PlanCuentasView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:AgregarAsientoViewModel}">
+            <placuentasViews:AgregarAsientoView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vm:TerceroViewModel}">
             <terceroViews:RegistrarTerceroView/>
         </DataTemplate>
