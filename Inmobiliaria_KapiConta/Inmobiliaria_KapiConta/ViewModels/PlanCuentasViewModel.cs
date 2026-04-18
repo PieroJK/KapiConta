@@ -69,6 +69,20 @@ namespace Inmobiliaria_KapiConta.ViewModels
             }
         }
 
+        // =========================
+        // ELIMINAR ATUMATIZACIÓN
+        // =========================
+
+        private AutomatizacionDetalleItem _automatizacionSeleccionada;
+        public AutomatizacionDetalleItem AutomatizacionSeleccionada
+        {
+            get => _automatizacionSeleccionada;
+            set
+            {
+                _automatizacionSeleccionada = value;
+                OnPropertyChanged();
+            }
+        }
         // ✅ Llamar esto después de asignar PlanCuentas en CargarDatos()
         private void AplicarFiltro()
         {
@@ -206,8 +220,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _automatizacionService = new AutomatizacionService();
 
             AgregarCommand = new RelayCommand(Agregar);
-            ModificarCommand = new RelayCommand(Modificar, () => CuentaSeleccionada != null);
-            EliminarCommand = new RelayCommand(Eliminar, () => CuentaSeleccionada != null);
+            ModificarCommand = new RelayCommand(Modificar, () => CuentaSeleccionada != null && !CuentaSeleccionada.EsBase);
+            EliminarCommand = new RelayCommand(Eliminar, () => CuentaSeleccionada != null && !CuentaSeleccionada.EsBase);
 
             AsientoMasCommand = new RelayCommand(AsientoMas);
             AsientoMenosCommand = new RelayCommand(AsientoMenos);
@@ -490,22 +504,62 @@ namespace Inmobiliaria_KapiConta.ViewModels
         {
             if (CuentaSeleccionada == null)
             {
-                System.Windows.MessageBox.Show("Selecciona una cuenta primero.");
+                MessageBox.Show("Selecciona una cuenta primero.");
                 return;
             }
 
-            System.Windows.MessageBox.Show("Aquí luego abriremos la ventana para agregar automatización.");
+            if (!TieneAutomatizacion)
+            {
+                MessageBox.Show("Activa los asientos automáticos primero.");
+                return;
+            }
+
+            var vm = new AgregarAsientoViewModel(CuentaSeleccionada.IdEmpresa);
+
+            var view = new Views.PlanCuentas.AgregarAsientoView
+            {
+                DataContext = vm
+            };
+
+            // 🔥 AQUÍ VA
+            vm.CloseAction = result =>
+            {
+                view.DialogResult = result;
+                view.Close();
+            };
+
+            var result = view.ShowDialog();
+
+            if (result == true && vm.Resultado != null)
+            {
+                Automatizacion.Add(vm.Resultado);
+            }
+
+
         }
 
         private void AsientoMenos()
         {
-            if (CuentaSeleccionada == null)
+            try
             {
-                System.Windows.MessageBox.Show("Selecciona una cuenta primero.");
-                return;
-            }
+                if (CuentaSeleccionada == null)
+                {
+                    MessageBox.Show("Selecciona una cuenta primero.");
+                    return;
+                }
 
-            System.Windows.MessageBox.Show("Aquí luego quitaremos el detalle de automatización seleccionado.");
+                if (AutomatizacionSeleccionada == null)
+                {
+                    MessageBox.Show("Selecciona una fila de automatización.");
+                    return;
+                }
+
+                Automatizacion.Remove(AutomatizacionSeleccionada);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al quitar asiento: " + ex.Message);
+            }
         }
 
         private void guardarautomatizacion()

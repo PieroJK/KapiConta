@@ -1,4 +1,4 @@
-﻿using Inmobiliaria_KapiConta.Models;
+﻿    using Inmobiliaria_KapiConta.Models;
 
 public static class AutomatizacionMapper
 {
