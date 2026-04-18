@@ -12,12 +12,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
     public class SeleccionEmpresaViewModel : INotifyPropertyChanged, IResizableView
     {
         private readonly MainViewModel _mainVM;
-        private readonly EmpresaService _empresaService;
+        private readonly EnterpriseService _empresaService;
 
         public SeleccionEmpresaViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
-            _empresaService = new EmpresaService();
+            _empresaService = new EnterpriseService();
 
             ContinuarCommand = new RelayCommand(Continuar);
             VolverCommand = new RelayCommand(Volver);
@@ -47,7 +47,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void CargarEmpresas()
         {
-            var lista = _empresaService.ObtenerEmpresas();
+            var lista = _empresaService.ListEnterprise();
 
             Empresas.Clear();
             foreach (var emp in lista)

@@ -32,6 +32,14 @@
             <placuentasViews:PlanCuentasView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:RegisterEnterpriseViewModel}">
+            <enterpriseViews:RegisterEnterpriseView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ListEnterpriseViewModel}">
+            <enterpriseViews:ListEnterpriseView />
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type vm:TerceroViewModel}">
             <terceroViews:RegistrarTerceroView/>
         </DataTemplate>
@@ -48,6 +56,6 @@
             <enterpriseViews:EnterpriseSelectionView/>
         </DataTemplate>
         
-
+        
     </Application.Resources>
 </Application>

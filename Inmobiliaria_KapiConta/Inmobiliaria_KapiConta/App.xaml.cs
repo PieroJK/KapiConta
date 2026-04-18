@@ -1,6 +1,10 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using Inmobiliaria_KapiConta.Services.DialogService;
+using Inmobiliaria_KapiConta.Services;
+using Inmobiliaria_KapiConta.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Inmobiliaria_KapiConta
 {

@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
+using Inmobiliaria_KapiConta.Views.Enterprise;
+using Inmobiliaria_KapiConta.Services;
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
@@ -22,6 +24,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         = new ObservableCollection<TabItemViewModel>();
 
         private TabItemViewModel _tabSeleccionado;
+        private readonly EnterpriseService service;
         public TabItemViewModel TabSeleccionado
         {
             get => _tabSeleccionado;
@@ -34,6 +37,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand CerrarTabCommand { get; }
         //termna prueba de ventanas
+
+        public ICommand RegisterEnterpriseCommand { get; }
+        public ICommand ListEnterpriseCommand { get; }
         public ICommand PlanCuentasCommand { get; }
         public ICommand RegistrarTercerosCommand { get; }
         public ICommand ListadoTercerosCommand { get; }
@@ -53,11 +59,57 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _mainVM = mainVM;
 
             // ✅ Cerrar pestaña
-            CerrarTabCommand = new RelayCommand(() =>
+            CerrarTabCommand = new RelayCommand<object>((param) =>
             {
                 if (TabSeleccionado != null)
                     Tabs.Remove(TabSeleccionado);
             });
+
+            // Generación de UserControl para registrar empresa en el dashboard
+            RegisterEnterpriseCommand = new RelayCommand(() =>
+            {
+                if (Session.CurrentEmpresa == null) return;
+                var existente = Tabs.FirstOrDefault(t => t.Titulo == "Registrar empresa");
+
+                if (existente != null)
+                {
+                    TabSeleccionado = existente;
+                    return;
+                }
+
+                var service = new EnterpriseService();
+                var vm = new RegisterEnterpriseViewModel(service);
+                var nuevaTab = new TabItemViewModel
+                {
+                    Titulo = "Registrar empresa",
+                    Contenido = vm
+                };
+
+                Tabs.Add(nuevaTab);
+                TabSeleccionado = nuevaTab;
+            });
+
+            ListEnterpriseCommand = new RelayCommand(() =>
+            {
+                if (Session.CurrentEmpresa == null) return;
+                var existente = Tabs.FirstOrDefault(t => t.Titulo == "Listar empresa");
+
+                if (existente != null)
+                {
+                    TabSeleccionado = existente;
+                    return;
+                }
+                var service = new EnterpriseService();
+                var vm = new ListEnterpriseViewModel(service);
+                var nuevaTab = new TabItemViewModel
+                {
+                    Titulo = "Listar empresa",
+                    Contenido = vm
+                };
+                Tabs.Add(nuevaTab);
+                TabSeleccionado = nuevaTab;
+            });
+            
 
             PlanCuentasCommand = new RelayCommand(() =>
             {

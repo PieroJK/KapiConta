@@ -2,10 +2,19 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="Views\CustomDialog\CustomDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Dashboard\DashboardView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Enterprise\EnterpriseSelectionView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Enterprise\ListEnterpriseView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Enterprise\RegisterEnterpriseView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Enterprise\SeleccionEmpresaPage.xaml.cs">

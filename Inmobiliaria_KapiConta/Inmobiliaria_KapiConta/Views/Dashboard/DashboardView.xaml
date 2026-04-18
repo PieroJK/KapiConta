@@ -57,8 +57,11 @@
                 </Menu.Resources>
                 
                 <MenuItem Header="Empresas">
-                    <MenuItem Header="Registrar nueva empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
-                    <MenuItem Header="Listado empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Registrar nueva empresa" Style="{StaticResource SubMenuItemStyle}"
+                              Command="{Binding RegisterEnterpriseCommand}">
+                    </MenuItem>
+                    <MenuItem Header="Listado empresa" Style="{StaticResource SubMenuItemStyle}"
+                              Command="{Binding ListEnterpriseCommand}"></MenuItem>
                     <MenuItem Header="Registrar usuario" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
                     <MenuItem Header="Listado usuario" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
                     <MenuItem Header="Ingresar nueva empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>

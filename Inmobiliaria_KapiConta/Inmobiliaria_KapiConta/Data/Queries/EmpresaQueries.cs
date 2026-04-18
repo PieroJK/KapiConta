@@ -2,7 +2,7 @@
 {
     public static class EmpresaQueries
     {
-        // 🔍 LISTAR EMPRESAS ACTIVAS
+        // LISTAR EMPRESAS ACTIVAS
         public static string Listar = @"
             SELECT 
                 id_empresa,
@@ -15,7 +15,7 @@
             ORDER BY nombre;
         ";
 
-        // 🔍 OBTENER POR ID
+        // OBTENER POR ID
         public static string ObtenerPorId = @"
             SELECT 
                 id_empresa,

@@ -3,6 +3,7 @@ using Npgsql;
 
 namespace Inmobiliaria_KapiConta.Data.Mappings
 {
+    // Los mappers se utlizan para convertir objetos de un tipo a otro tipo.
     public static class EmpresaMapper
     {
         public static Empresa Map(NpgsqlDataReader reader)
