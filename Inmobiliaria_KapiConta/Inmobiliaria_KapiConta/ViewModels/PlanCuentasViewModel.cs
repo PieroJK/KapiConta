@@ -175,7 +175,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // COMBOS
         // =========================
 
-        public ObservableCollection<Elemento> Elementos { get; set; } = new();
+        private ObservableCollection<Elemento> _elementos;
+        public ObservableCollection<Elemento> Elementos
+        {
+            get => _elementos;
+            set { _elementos = value; OnPropertyChanged(); }
+        }
         public ObservableCollection<Balance> Balances { get; set; } = new();
 
         private ObservableCollection<PlanCuenta> _cuentasPadre;
@@ -262,16 +267,19 @@ namespace Inmobiliaria_KapiConta.ViewModels
         {
             if (CuentaSeleccionada == null) return;
 
-            Codigo = CuentaSeleccionada.Codigo;
-            Descripcion = CuentaSeleccionada.Descripcion;
-            CodigoPadre = CuentaSeleccionada.CodigoPadre;
-            ElementoSeleccionado = Elementos.FirstOrDefault(x => x.IdElemento == CuentaSeleccionada.IdElemento);
-            BalanceSeleccionado = Balances.FirstOrDefault(x => x.IdBalance == CuentaSeleccionada.IdBalance);
-            Analisis = CuentaSeleccionada.Analisis;
-
-            // 🔹 AQUÍ ESTÁ LO IMPORTANTE
+            CargarFormulario(CuentaSeleccionada);
             CargarAutomatizacion(CuentaSeleccionada.IdPlanCuenta);
+        }
 
+        private void CargarFormulario(PlanCuenta cuenta)
+        {
+            Codigo = cuenta.Codigo;
+            Descripcion = cuenta.Descripcion;
+            Nivel = cuenta.Nivel;
+            CodigoPadre = cuenta.CodigoPadre;
+            ElementoSeleccionado = Elementos?.FirstOrDefault(x => x.IdElemento == cuenta.IdElemento);
+            BalanceSeleccionado = Balances?.FirstOrDefault(x => x.IdBalance == cuenta.IdBalance);
+            Analisis = cuenta.Analisis;
         }
 
         // =========================
@@ -489,13 +497,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         private void Limpiar()
         {
             CuentaSeleccionada = null;
-            Codigo = "";
-            Descripcion = "";
-            Nivel = 0;
-            CodigoPadre = null;
-            ElementoSeleccionado = null;
-            BalanceSeleccionado = null;
-            Analisis = false;
+            CargarFormulario(new PlanCuenta()); // ✅ objeto vacío limpia todo
             TieneAutomatizacion = false;
             Automatizacion.Clear();
         }

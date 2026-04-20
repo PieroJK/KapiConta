@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inmobiliaria_KapiConta.Views.Terceros"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             Background="#2F4A5A"
+             >
     <UserControl.Resources>
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
@@ -37,7 +39,7 @@
         <Border Width="1108"
             Height="598"
             Background="#31465B"
-            HorizontalAlignment="Left"
+            HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Padding="22" Margin="21,0,0,0">
 
