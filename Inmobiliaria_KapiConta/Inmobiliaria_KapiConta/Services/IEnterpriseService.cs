@@ -11,5 +11,7 @@ namespace Inmobiliaria_KapiConta.Services
     {
         void AddEnterprise(Empresa e);
         List<Empresa> ListEnterprise();
+        void UpdateEnterprise(Empresa e);
+        void DeleteEnterprise(Empresa e);
     }
 }

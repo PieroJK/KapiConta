@@ -45,8 +45,22 @@ namespace Inmobiliaria_KapiConta.Services
         public void UpdateEnterprise(Empresa e)
         {
             using var conn = DbConnectionFactory.Create();
-            conn.Execute(EmpresaQueries.Actualizar, e);
+            //conn.Execute(EmpresaQueries.Actualizar, e);
+            var id = conn.QuerySingle<int>(EmpresaQueries.Actualizar, new
+            {
+                ruc = e.Ruc,
+                nombre = e.Nombre,
+                direccion = e.Direccion,
+                estado = true
+            });
         }
-
+        public void DeleteEnterprise(Empresa e)
+        {
+            using var conn = DbConnectionFactory.Create();
+            var id = conn.QuerySingle<int>(EmpresaQueries.Eliminar, new
+            {
+                id = e.IdEmpresa
+            });
+        }
     }
 }

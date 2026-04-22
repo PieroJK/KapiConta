@@ -8,6 +8,7 @@
              xmlns:dashboarViews="clr-namespace:Inmobiliaria_KapiConta.Views.Dashboard"
              xmlns:placuentasViews="clr-namespace:Inmobiliaria_KapiConta.Views.PlanCuentas"
              xmlns:terceroViews="clr-namespace:Inmobiliaria_KapiConta.Views.Terceros"
+             
              StartupUri="MainWindow.xaml">
 
     <Application.Resources>
@@ -43,7 +44,13 @@
         <DataTemplate DataType="{x:Type vm:ListEnterpriseViewModel}">
             <enterpriseViews:ListEnterpriseView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ListUsersViewModel}">
+            <loginViews:ListadoUsuariosView />
+        </DataTemplate>
+
         
+
         <DataTemplate DataType="{x:Type vm:TerceroViewModel}">
             <terceroViews:RegistrarTerceroView/>
         </DataTemplate>

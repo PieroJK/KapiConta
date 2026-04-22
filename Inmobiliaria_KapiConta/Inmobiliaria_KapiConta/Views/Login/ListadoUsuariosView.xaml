@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Inmobiliaria_KapiConta.Views.Login.ListadoUsuarios"
+﻿<UserControl x:Class="Inmobiliaria_KapiConta.Views.Login.ListadoUsuariosView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -328,8 +328,8 @@
                     <ListView x:Name="LvUsuarios"
                               Grid.Row="1"
                               ItemContainerStyle="{StaticResource UserListItem}"
-                              ItemsSource="{Binding Usuarios}"
-                              SelectedItem="{Binding UsuarioSeleccionado, Mode=TwoWay}"
+                              ItemsSource="{Binding Items}"
+                              SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
                               BorderThickness="0"
                               Background="White"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -345,7 +345,7 @@
                                                FontSize="12"
                                                VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1"
-                                               Text="{Binding Codigo}"
+                                               Text="{Binding Estado}"
                                                FontSize="11"
                                                Foreground="#888888"
                                                HorizontalAlignment="Right"
@@ -389,7 +389,7 @@
                                     Background="#2E4D5E"
                                     CornerRadius="8"
                                     Padding="12,6">
-                                <TextBlock Text="{Binding CodigoTexto}"
+                                <TextBlock Text="{Binding SelectedUser.Id}"
                                            FontSize="13"
                                            Foreground="#AAAAAA"
                                            FontFamily="Consolas"/>
@@ -399,7 +399,7 @@
                         <!-- Nombre usuario -->
                         <TextBox Style="{StaticResource InputBox}"
                                  Tag="Nombre Usuario"
-                                 Text="{Binding EditNombreUsuario, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding SelectedUser.Nombre, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,12"/>
 
                         <!-- Clave -->
@@ -410,7 +410,7 @@
                         <!-- Nombre empleado -->
                         <TextBox Style="{StaticResource InputBox}"
                                  Tag="Nombre empleado"
-                                 Text="{Binding EditNombreEmpleado, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding SelectedUser.Nombre, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,12"/>
 
                         <!-- Rol + Estado en fila -->
@@ -423,7 +423,7 @@
 
                             <ComboBox Grid.Column="0"
                                       Style="{StaticResource InputCombo}"
-                                      SelectedValue="{Binding EditRol}">
+                                      SelectedValue="{Binding SelectedUser.Rol.Nombre}">
                                 <ComboBoxItem Content="Administrador"/>
                                 <ComboBoxItem Content="Contador"/>
                                 <ComboBoxItem Content="Auxiliar"/>
@@ -432,19 +432,19 @@
 
                             <ComboBox Grid.Column="2"
                                       Style="{StaticResource InputCombo}"
-                                      SelectedValue="{Binding EditEstado}">
+                                      SelectedValue="{Binding SelectedUser.Estado}">
                                 <ComboBoxItem Content="Activo"/>
                                 <ComboBoxItem Content="Inactivo"/>
                             </ComboBox>
                         </Grid>
 
-                        <!-- Mensaje error -->
+                        <!-- Mensaje error 
                         <TextBlock Text="{Binding MensajeError}"
                                    Foreground="#FF6B6B"
                                    FontSize="12"
                                    Margin="0,0,0,10"
                                    TextWrapping="Wrap"
-                                   Visibility="{Binding HayError}"/>
+                                   Visibility="{Binding HayError}"/>-->
 
                         <!-- Botones -->
                         <Grid>

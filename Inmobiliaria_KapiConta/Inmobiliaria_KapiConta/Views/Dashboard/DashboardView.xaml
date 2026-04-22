@@ -63,7 +63,8 @@
                     <MenuItem Header="Listado empresa" Style="{StaticResource SubMenuItemStyle}"
                               Command="{Binding ListEnterpriseCommand}"></MenuItem>
                     <MenuItem Header="Registrar usuario" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
-                    <MenuItem Header="Listado usuario" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Listado usuario" Style="{StaticResource SubMenuItemStyle}"
+                              Command="{Binding ListUsersCommand}"></MenuItem>
                     <MenuItem Header="Ingresar nueva empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Procesos">

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -22,7 +23,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 
         private List<Empresa> _items;
-        private string _selectedItem;
+        private Empresa _selectedItem;
 
         public ICommand VolverCommand { get; }
         public ICommand ModificarCommand { get; }
@@ -38,30 +39,34 @@ namespace Inmobiliaria_KapiConta.ViewModels
             }
         }
 
-        public string SelectedItem
+        public Empresa SelectedItem
         {
             get => _selectedItem;
             set
             {
                 _selectedItem = value;
                 OnPropertyChanged();
-                // Aquí puedes ejecutar lógica cuando se selecciona un item
-                SelectItem();
+
+                if (value != null)
+                {
+                    GetSelectItemData();
+                }
             }
         }
         
-        private void SelectItem()
+        private void GetSelectItemData()
         {
-            if (!string.IsNullOrEmpty(SelectedItem))
-            {
-                // Lógica cuando se selecciona un item
-                System.Diagnostics.Debug.WriteLine($"Seleccionado: {SelectedItem}");
-            }
+            string ruc = SelectedItem.Ruc;
+            string nombre = SelectedItem.Nombre;
+            string estado =  SelectedItem.Estado.ToString();
+            string direccion = SelectedItem.Direccion;
+
+            // Debug
+            System.Diagnostics.Debug.WriteLine($"Seleccionado: {nombre} - RUC: {ruc}");
         }
         private void ListEnterprise()
         {
             Items = _enterpriseService.ListEnterprise();
-            //_enterpriseService.ListEnterprise();
         }
 
         public ListEnterpriseViewModel(IEnterpriseService enterpriseService)
@@ -70,12 +75,34 @@ namespace Inmobiliaria_KapiConta.ViewModels
             ListEnterprise();
 
             VolverCommand = new RelayCommand(Volver);
-            ModificarCommand = new RelayCommand(Modificar, () => SelectedItem != null);
-            EliminarCommand = new RelayCommand(Eliminar, () => SelectedItem != null);
+            ModificarCommand = new RelayCommand(Modificar);
+            EliminarCommand = new RelayCommand(Eliminar);
         }
 
         private void Volver() { /* Navegar atrás */ }
-        private void Modificar() { /* Lógica de modificación */ }
-        private void Eliminar() { /* Lógica de eliminación */ }
+        private void Modificar() 
+        {
+            try
+            {
+                _enterpriseService.UpdateEnterprise(SelectedItem);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Empresa No Actualizada: {ex.Message}");
+            }
+            
+            
+        }
+        private void Eliminar() 
+        {
+            try
+            {
+                _enterpriseService.DeleteEnterprise(SelectedItem);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Empresa No Eliminada: {ex.Message}");
+            }
+        }
     }
 }

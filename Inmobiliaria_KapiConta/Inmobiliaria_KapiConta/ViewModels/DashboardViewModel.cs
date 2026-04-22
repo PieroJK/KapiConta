@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Diagnostics;
 using Inmobiliaria_KapiConta.Views.Enterprise;
 using Inmobiliaria_KapiConta.Services;
+using Inmobiliaria_KapiConta.Services.UserService;
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
@@ -40,6 +41,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand RegisterEnterpriseCommand { get; }
         public ICommand ListEnterpriseCommand { get; }
+        public ICommand ListUsersCommand { get; }
         public ICommand PlanCuentasCommand { get; }
         public ICommand RegistrarTercerosCommand { get; }
         public ICommand ListadoTercerosCommand { get; }
@@ -109,7 +111,26 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 Tabs.Add(nuevaTab);
                 TabSeleccionado = nuevaTab;
             });
-            
+
+            ListUsersCommand = new RelayCommand(() =>
+            {
+                if(Session.CurrentEmpresa == null) return;
+                var existente = Tabs.FirstOrDefault(t => t.Titulo == "Listar usuario");
+                if (existente != null)
+                {
+                    TabSeleccionado = existente;
+                    return;
+                }
+                var service = new UserService();
+                var vm = new ListUsersViewModel(service);
+                var nuevaTab = new TabItemViewModel
+                {
+                    Titulo = "Listar usuario",
+                    Contenido = vm
+                };
+                Tabs.Add(nuevaTab);
+                TabSeleccionado = nuevaTab;
+            });
 
             PlanCuentasCommand = new RelayCommand(() =>
             {
