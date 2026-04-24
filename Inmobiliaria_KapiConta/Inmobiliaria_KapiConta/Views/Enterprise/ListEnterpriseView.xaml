@@ -3,9 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:converter="clr-namespace:Inmobiliaria_KapiConta.Helpers.Converters"
              mc:Ignorable="d"
              Background="#2F4A5A">
-
+    <UserControl.Resources>
+        <converter:BoolToEstadoConverter x:Key="BoolToEstado"/>
+    </UserControl.Resources>
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"/>
@@ -50,12 +54,13 @@
                      Background="#D9D9D9"/>
 
             <!-- Estado -->
-            <ComboBox SelectedItem="{Binding SelectedItem.Estado}"
-                      Height="35"
-                      Margin="0,10"
-                      IsEnabled="True">
-                <ComboBoxItem Content="Activo"/>
-                <ComboBoxItem Content="Inactivo"/>
+            <ComboBox SelectedItem="{Binding SelectedItem.Estado, Converter={StaticResource BoolToEstado}}"
+                  Height="35"
+                  Margin="0,10">    
+                <ComboBox.Items>
+                    <sys:String>Activo</sys:String>
+                    <sys:String>Inactivo</sys:String>
+                </ComboBox.Items>
             </ComboBox>
 
             <!-- BOTONES -->

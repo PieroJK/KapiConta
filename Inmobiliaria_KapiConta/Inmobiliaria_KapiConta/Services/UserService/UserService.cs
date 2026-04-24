@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using Dapper;
 using Inmobiliaria_KapiConta.Data;
 using Inmobiliaria_KapiConta.Data.Queries;
@@ -17,10 +18,14 @@ namespace Inmobiliaria_KapiConta.Services.UserService
         public List<Usuario> ListUser()
         {
                 using var conn = DbConnectionFactory.Create();
-                var lista = conn.Query<Usuario>(UsuarioQuery.Listar);
-                Debug.WriteLine($"Cantidad de la lista: {lista.Count()}");
-                Debug.WriteLine($"Tipo de variable: {lista.GetType}");
-                return (List<Usuario>)lista;
+            var lista = conn.Query<Usuario, RolUsuario, Usuario>(UsuarioQuery.Listar, (usuario, rol) =>
+            {
+                usuario.Rol = rol;
+                return usuario;
+            },
+            splitOn: "idrol");
+                
+            return lista.ToList(); //La propiedad ToList() convierte la lista de tipo IEnumerable a List<Usuario> 
         }
         public void AddUser(Usuario u)
         {

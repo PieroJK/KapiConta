@@ -58,11 +58,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
         {
             string ruc = SelectedItem.Ruc;
             string nombre = SelectedItem.Nombre;
-            string estado =  SelectedItem.Estado.ToString();
+            bool estado =  SelectedItem.Estado;
+            Debug.WriteLine(estado);
             string direccion = SelectedItem.Direccion;
-
-            // Debug
-            System.Diagnostics.Debug.WriteLine($"Seleccionado: {nombre} - RUC: {ruc}");
         }
         private void ListEnterprise()
         {

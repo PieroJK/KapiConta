@@ -53,12 +53,39 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void GetSelectItemData()
         {
-            string username = SelectedUser.Username;
-            string nombre = SelectedUser.Nombre;
-            string rol = SelectedUser.Rol.Nombre;
-            string estado = SelectedUser.Estado.ToString();
-            // Debug
-            System.Diagnostics.Debug.WriteLine($"Seleccionado: {nombre} - Rol: {rol}");
+            // Validación temprana
+            if (SelectedUser == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[ERROR] SelectedUser es null");
+                return;
+            }
+            try
+            {
+                // Extracción segura de datos
+                string idUsuario = SelectedUser.Id.ToString() ?? "0";
+                string username = SelectedUser.Username ?? string.Empty;
+                string nombre = SelectedUser.Nombre ?? string.Empty;
+                string rol = SelectedUser.Rol?.Nombre ?? "Sin rol";
+                string estado = SelectedUser.Estado == true ? "Activo" : "Inactivo";
+
+                // Debug completo
+                System.Diagnostics.Debug.WriteLine(
+                    $"[GetSelectItemData] " +
+                    $"ID: {idUsuario} | " +
+                    $"User: {username} | " +
+                    $"Nombre: {nombre} | " +
+                    $"Rol: {rol} | " +
+                    $"Estado: {estado}"
+                );
+
+                // Aquí usas los datos según necesites
+                // Ejemplo: Actualizar UI o lógica de negocio
+                //ActualizarUI(idUsuario, nombre, rol, estado);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ERROR] GetSelectItemData: {ex.Message}");
+            }
         }
 
         private void ListUsers ()

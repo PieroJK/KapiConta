@@ -12,12 +12,12 @@ namespace Inmobiliaria_KapiConta.Data.Queries
             @"
             SELECT 
                     u.id_usuario,
-                    u.usuario,
-                    u.clave_hash,
-                    u.nombre,
-                    u.id_rol,
-                    u.estado,
-                    r.nombre AS rol_nombre
+                    u.usuario AS Username,
+                    u.clave_hash AS PasswordHash,
+                    u.nombre AS Nombre,
+                    u.estado AS Estado,
+                    r.id_rol AS IdRol,
+                    r.nombre 
             FROM usuario u
             INNER JOIN rol r ON u.id_rol = r.id_rol
             ORDER BY u.usuario
@@ -47,7 +47,7 @@ namespace Inmobiliaria_KapiConta.Data.Queries
             SET estado = false
             WHERE id_usuario = @id
             ;";
-
+        
 
     }
 }
