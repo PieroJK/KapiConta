@@ -45,6 +45,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public ICommand PlanCuentasCommand { get; }
         public ICommand RegistrarTercerosCommand { get; }
         public ICommand ListadoTercerosCommand { get; }
+        //cambio
+        public ICommand ImportarAsientoCommand { get; }
 
         private object _contenidoActual;
         public object ContenidoActual
@@ -211,6 +213,39 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     var nuevaTab = new TabItemViewModel
                     {
                         Titulo = "Listado Terceros",
+                        Contenido = vm
+                    };
+
+                    Tabs.Add(nuevaTab);
+                    TabSeleccionado = nuevaTab;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] {DateTime.Now}");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            });
+            //cambio
+            ImportarAsientoCommand = new RelayCommand(() =>
+            {
+                try
+                {
+                    if (Session.CurrentEmpresa == null) return;
+
+                    var existente = Tabs.FirstOrDefault(t => t.Titulo == "Importar Asiento");
+
+                    if (existente != null)
+                    {
+                        TabSeleccionado = existente;
+                        return;
+                    }
+
+                    var vm = new ImportarAsientoViewModel(); // 🔥 aquí probablemente rompe
+
+                    var nuevaTab = new TabItemViewModel
+                    {
+                        Titulo = "Importar Asiento",
                         Contenido = vm
                     };
 

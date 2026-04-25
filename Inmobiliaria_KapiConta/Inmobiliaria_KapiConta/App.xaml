@@ -8,7 +8,11 @@
              xmlns:dashboarViews="clr-namespace:Inmobiliaria_KapiConta.Views.Dashboard"
              xmlns:placuentasViews="clr-namespace:Inmobiliaria_KapiConta.Views.PlanCuentas"
              xmlns:terceroViews="clr-namespace:Inmobiliaria_KapiConta.Views.Terceros"
+<<<<<<< Updated upstream
              
+=======
+             xmlns:asientoViews="clr-namespace:Inmobiliaria_KapiConta.Views.GestionAsiento"
+>>>>>>> Stashed changes
              StartupUri="MainWindow.xaml">
 
     <Application.Resources>
@@ -61,6 +65,10 @@
 
         <DataTemplate DataType="{x:Type vm:EditarTerceroViewModel}">
             <terceroViews:EditarTerceroView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ImportarAsientoViewModel}">
+            <asientoViews:ImportarAiento/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">
