@@ -8,11 +8,7 @@
              xmlns:dashboarViews="clr-namespace:Inmobiliaria_KapiConta.Views.Dashboard"
              xmlns:placuentasViews="clr-namespace:Inmobiliaria_KapiConta.Views.PlanCuentas"
              xmlns:terceroViews="clr-namespace:Inmobiliaria_KapiConta.Views.Terceros"
-<<<<<<< Updated upstream
-             
-=======
              xmlns:asientoViews="clr-namespace:Inmobiliaria_KapiConta.Views.GestionAsiento"
->>>>>>> Stashed changes
              StartupUri="MainWindow.xaml">
 
     <Application.Resources>
