@@ -9,15 +9,18 @@ using Dapper;
 using Inmobiliaria_KapiConta.Data;
 using Inmobiliaria_KapiConta.Data.Queries;
 using Inmobiliaria_KapiConta.Models;
+using Inmobiliaria_KapiConta.Services.PasswordService;
+using Inmobiliaria_KapiConta.Services.RolService;
 
 namespace Inmobiliaria_KapiConta.Services.UserService
 {
     public class UserService : IUserService
     {
 
+        private readonly IPasswordService _passwordService;
         public List<Usuario> ListUser()
         {
-                using var conn = DbConnectionFactory.Create();
+            using var conn = DbConnectionFactory.Create();
             var lista = conn.Query<Usuario, RolUsuario, Usuario>(UsuarioQuery.Listar, (usuario, rol) =>
             {
                 usuario.Rol = rol;
@@ -27,18 +30,19 @@ namespace Inmobiliaria_KapiConta.Services.UserService
                 
             return lista.ToList(); //La propiedad ToList() convierte la lista de tipo IEnumerable a List<Usuario> 
         }
-        public void AddUser(Usuario u)
+        public void AddUser(Usuario u, string plainTextPassword)
         {
+            string hashedPassword = _passwordService.HashPassword(plainTextPassword);
             using var conn = DbConnectionFactory.Create();
-            var id = conn.QuerySingle<int>(UsuarioQuery.Insertar, new
+            int rowAdded = conn.Execute(UsuarioQuery.Insertar, new
             {
-                id_usuario = u.Id,
                 usuario = u.Username,
-                clave_hash = u.PasswordHash,
+                clave = hashedPassword,
                 nombre = u.Nombre,
-                id_rol = u.Rol.IdRol 
+                rol = u.Rol.IdRol
+                //rol = rolId
             });
-            u.Id = id;
+            Debug.WriteLine($"ROWS AFFECTED: {rowAdded}");
         }
 
         public void UpdateUser(Usuario u)
@@ -60,6 +64,10 @@ namespace Inmobiliaria_KapiConta.Services.UserService
             {
                 id_usuario = u.Id,
             });
+        }
+        public UserService(IPasswordService passwordService)
+        {
+            _passwordService = passwordService;
         }
     }
 }

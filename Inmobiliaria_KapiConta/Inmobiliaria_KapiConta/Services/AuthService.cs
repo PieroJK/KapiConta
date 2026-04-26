@@ -32,5 +32,7 @@ namespace Inmobiliaria_KapiConta.Services
 
           return user;
         }
+        
+
     }
 }

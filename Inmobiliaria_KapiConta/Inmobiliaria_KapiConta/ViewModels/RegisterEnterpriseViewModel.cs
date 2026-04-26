@@ -29,14 +29,14 @@ namespace Inmobiliaria_KapiConta.ViewModels
         {
             get
             {
-                Debug.WriteLine($"🔍 Get NewEnterprise: {_newEnterprise != null}");
+                Debug.WriteLine($"Get NewEnterprise: {_newEnterprise != null}");
                 return _newEnterprise;
             }
             set
             {
                 _newEnterprise = value;
                 OnPropertyChanged();
-                Debug.WriteLine($"✅ Set NewEnterprise: {value != null}");
+                Debug.WriteLine($"Set NewEnterprise: {value != null}");
             }
         }
 

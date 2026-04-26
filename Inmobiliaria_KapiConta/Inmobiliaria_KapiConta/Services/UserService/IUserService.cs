@@ -9,7 +9,7 @@ namespace Inmobiliaria_KapiConta.Services.UserService
 {
     public interface IUserService
     {
-        void AddUser(Usuario u);
+        void AddUser(Usuario u, string plainTextPassword);
         List<Usuario> ListUser();
         void UpdateUser(Usuario u);
         void DeleteUser(Usuario u);

@@ -11,7 +11,7 @@ namespace Inmobiliaria_KapiConta.Data.Queries
         public static string Listar = 
             @"
             SELECT 
-                id_rol, nombre 
+                id_rol as IdRol, nombre 
             FROM rol 
             ORDER BY nombre;";
     }

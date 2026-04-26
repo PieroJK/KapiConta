@@ -78,9 +78,6 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     $"Estado: {estado}"
                 );
 
-                // Aquí usas los datos según necesites
-                // Ejemplo: Actualizar UI o lógica de negocio
-                //ActualizarUI(idUsuario, nombre, rol, estado);
             }
             catch (Exception ex)
             {

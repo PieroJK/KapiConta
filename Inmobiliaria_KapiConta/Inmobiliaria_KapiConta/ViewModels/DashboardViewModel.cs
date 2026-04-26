@@ -9,12 +9,15 @@ using System.Diagnostics;
 using Inmobiliaria_KapiConta.Views.Enterprise;
 using Inmobiliaria_KapiConta.Services;
 using Inmobiliaria_KapiConta.Services.UserService;
+using Inmobiliaria_KapiConta.Services.PasswordService;
+using Inmobiliaria_KapiConta.Services.RolService;
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
     public class DashboardViewModel : INotifyPropertyChanged, IResizableView
     {
         private readonly MainViewModel _mainVM;
+        private readonly IUserService _userService;
         public double Width => 1500;   // puedes ajustarlo
         public double Height => 800;
         public string Usuario => $"Usuario: {Session.CurrentUser?.Username}";
@@ -41,6 +44,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand RegisterEnterpriseCommand { get; }
         public ICommand ListEnterpriseCommand { get; }
+        public ICommand RegisterUsersCommand { get; }
         public ICommand ListUsersCommand { get; }
         public ICommand PlanCuentasCommand { get; }
         public ICommand RegistrarTercerosCommand { get; }
@@ -59,6 +63,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public DashboardViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
+            
 
             // ✅ Cerrar pestaña
             CerrarTabCommand = new RelayCommand<object>((param) =>
@@ -121,11 +126,36 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     TabSeleccionado = existente;
                     return;
                 }
-                var service = new UserService();
+
+                var passService = new PasswordService();
+                var rolService = new RolService();
+                var service = new UserService(passService);
                 var vm = new ListUsersViewModel(service);
                 var nuevaTab = new TabItemViewModel
                 {
                     Titulo = "Listar usuario",
+                    Contenido = vm
+                };
+                Tabs.Add(nuevaTab);
+                TabSeleccionado = nuevaTab;
+            });
+
+            RegisterUsersCommand = new RelayCommand(() =>
+            {
+                if (Session.CurrentEmpresa == null) return;
+                var existente = Tabs.FirstOrDefault(t => t.Titulo == "Registrar usuario");
+                if (existente != null)
+                {
+                    TabSeleccionado = existente;
+                    return;
+                }
+                var passService = new PasswordService();
+                var rolService = new RolService();
+                var service = new UserService(passService);
+                var vm = new RegisterUserViewModel(service, rolService);
+                var nuevaTab = new TabItemViewModel
+                {
+                    Titulo = "Registrar usuario",
                     Contenido = vm
                 };
                 Tabs.Add(nuevaTab);
