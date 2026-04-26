@@ -70,7 +70,7 @@
                 </MenuItem>
                 <MenuItem Header="Procesos">
                     <MenuItem Header="Ingresar Asiento" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
-                    <MenuItem Header="Importar Asiento" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
+                    <MenuItem Header="Importar Asiento" Style="{StaticResource SubMenuItemStyle}" Command="{Binding ImportarAsientoCommand }"></MenuItem>
                 </MenuItem>
                 
                 <MenuItem Header="Registro" Click="MenuItem_Click">

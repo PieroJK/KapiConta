@@ -20,12 +20,15 @@
     <Compile Update="Views\Enterprise\SeleccionEmpresaPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Login\ListadoUsuariosView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\Login\RegistrarUsuarioView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+	  <Compile Update="Views\Login\ListadoUsuariosView.xaml.cs">
+		  <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\Login\RegistrarUsuarioView.xaml.cs">
+		  <SubType>Code</SubType>
+	  </Compile>
+	  <Compile Update="Views\GestionAsiento\ImportarAiento.xaml.cs">
+		  <SubType>Code</SubType>
+	  </Compile>
     <Compile Update="Views\Periodo\SeleccionPeriodoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
