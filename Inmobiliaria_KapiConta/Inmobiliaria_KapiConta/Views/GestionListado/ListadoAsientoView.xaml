@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="Inmobiliaria_KapiConta.Views.GestionListado.ListadoAsientoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Background="#2F4A5A">
+
+    <DockPanel>
+
+        <!-- FILTROS -->
+        <Border DockPanel.Dock="Top"
+                Background="#2D2D2D"
+                Padding="10"
+                BorderBrush="#8C6239"
+                BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                <TextBlock Text="Mes:" Foreground="White"
+                           VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <ComboBox ItemsSource="{Binding Meses}"
+          SelectedItem="{Binding MesSeleccionado}"
+          DisplayMemberPath="Nombre"
+          SelectedValuePath="IdMes">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
+
+                <TextBlock Text="Subdiario:" Foreground="White"
+                           VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <ComboBox ItemsSource="{Binding SubDiarios}"
+          SelectedItem="{Binding SubDiarioSeleccionado}"
+          DisplayMemberPath="Nombre"
+          SelectedValuePath="Diario">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
+
+                <Button Content="PROCESAR"
+                        Width="110" Height="30" Margin="5,0"
+                        Background="#007ACC" Foreground="White"
+                        BorderThickness="0" FontWeight="Bold"
+                        Command="{Binding ProcesarCommand}"/>
+
+                <Button Content="EXCEL"
+                        Width="110" Height="30" Margin="5,0"
+                        Background="#1D6F42" Foreground="White"
+                        BorderThickness="0" FontWeight="Bold"
+                        Command="{Binding ExportarExcelCommand}"/>
+
+            </StackPanel>
+        </Border>
+
+        <!-- DATAGRID -->
+        <DataGrid ItemsSource="{Binding Asientos}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Margin="10"
+                  Background="White"
+                  RowBackground="White"
+                  AlternatingRowBackground="#F5F5F5"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="All"
+                  CanUserAddRows="False">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Correlativo"    Binding="{Binding numero_correlativo}"                           Width="120"/>
+                <DataGridTextColumn Header="Fecha"          Binding="{Binding fecha_emision, StringFormat=yyyy-MM-dd}"        Width="100"/>
+                <DataGridTextColumn Header="Vencimiento"    Binding="{Binding fecha_ven, StringFormat=yyyy-MM-dd}"            Width="100"/>
+                <DataGridTextColumn Header="T.Doc"          Binding="{Binding tipo_doc}"                                     Width="60"/>
+                <DataGridTextColumn Header="Serie-Número"   Binding="{Binding serie_numero}"                                 Width="140"/>
+                <DataGridTextColumn Header="T.Doc Cliente"  Binding="{Binding tipo_doc_cliente}"                             Width="80"/>
+                <DataGridTextColumn Header="RUC/DNI"        Binding="{Binding nro_documento}"                                Width="120"/>
+                <DataGridTextColumn Header="Razón Social"   Binding="{Binding razon_social}"                                 Width="250"/>
+                <DataGridTextColumn Header="Base Total"     Binding="{Binding base_total, StringFormat=N2}"                  Width="100"/>
+                <DataGridTextColumn Header="Base Imponible" Binding="{Binding base_imponible, StringFormat=N2}"              Width="110"/>
+                <DataGridTextColumn Header="Exonerada"      Binding="{Binding exonerada, StringFormat=N2}"                   Width="100"/>
+                <DataGridTextColumn Header="Inafecta"       Binding="{Binding inafecta, StringFormat=N2}"                    Width="100"/>
+                <DataGridTextColumn Header="V. Imponible"   Binding="{Binding valor_imponible, StringFormat=N2}"             Width="110"/>
+                <DataGridTextColumn Header="IGV"            Binding="{Binding igv, StringFormat=N2}"                         Width="100"/>
+                <DataGridTextColumn Header="ISC"            Binding="{Binding isc, StringFormat=N2}"                         Width="100"/>
+                <DataGridTextColumn Header="Total"          Binding="{Binding importe_total, StringFormat=N2}"               Width="110"/>
+                <DataGridTextColumn Header="Glosa"          Binding="{Binding glosa}"                                        Width="250"/>
+                <DataGridTextColumn Header="Moneda"         Binding="{Binding moneda}"                                       Width="60"/>
+                <DataGridTextColumn Header="T.Cambio"       Binding="{Binding tipo_cambio}"                                  Width="80"/>
+                <DataGridTextColumn Header="Usuario"        Binding="{Binding usuario}"                                      Width="80"/>
+                <DataGridTextColumn Header="Modificación"   Binding="{Binding fecha_modificacion, StringFormat=yyyy-MM-dd HH:mm}" Width="140"/>
+                <DataGridTextColumn Header="Cte. Modificado" Binding="{Binding comprobante_modificado}"                      Width="130"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </DockPanel>
+</UserControl>

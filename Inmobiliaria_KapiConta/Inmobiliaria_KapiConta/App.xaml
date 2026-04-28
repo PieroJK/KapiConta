@@ -9,6 +9,7 @@
              xmlns:placuentasViews="clr-namespace:Inmobiliaria_KapiConta.Views.PlanCuentas"
              xmlns:terceroViews="clr-namespace:Inmobiliaria_KapiConta.Views.Terceros"
              xmlns:asientoViews="clr-namespace:Inmobiliaria_KapiConta.Views.GestionAsiento"
+             xmlns:listadoViews="clr-namespace:Inmobiliaria_KapiConta.Views.GestionListado" 
              StartupUri="MainWindow.xaml">
 
     <Application.Resources>
@@ -71,9 +72,14 @@
             <asientoViews:ImportarAiento/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:ListadoAsientoViewModel}">
+            <listadoViews:ListadoAsientoView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">
             <enterpriseViews:EnterpriseSelectionView/>
         </DataTemplate>
+        
         
         
     </Application.Resources>

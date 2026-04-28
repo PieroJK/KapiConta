@@ -139,5 +139,52 @@
             SET estado = false
             WHERE id_asiento = @idAsiento
               AND id_empresa = @idEmpresa;";
+
+        public static string ListarAsientos = @"
+            SELECT 
+                a.referencia AS numero_correlativo,
+                a.fecha AS fecha_emision,
+                a.fecha_ven,
+                tf.cod AS tipo_doc,
+                ad.serie_comprobante AS serie_numero,
+                ttd.cod AS tipo_doc_cliente,
+                t.documento AS nro_documento,
+                t.razon_social,
+                SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) AS base_total,
+                CASE WHEN MAX(toa.codigo) = 'GRA' THEN SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) ELSE 0 END AS base_imponible,
+                CASE WHEN MAX(toa.codigo) = 'EXO' THEN SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) ELSE 0 END AS exonerada,
+                CASE WHEN MAX(toa.codigo) = 'INA' THEN SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) ELSE 0 END AS inafecta,
+                SUM(CASE WHEN toa.codigo = 'VIM' THEN ad.debe ELSE 0 END) AS valor_imponible,
+                SUM(CASE WHEN pc.codigo LIKE '40%' THEN ad.debe ELSE 0 END) AS igv,
+                SUM(CASE WHEN pc.codigo LIKE '403%' THEN ad.debe ELSE 0 END) AS isc,
+                SUM(ad.debe) AS importe_total,
+                ad.glosa AS glosa,
+                a.moneda,
+                CASE WHEN a.moneda = 'PEN' THEN 1 ELSE tc.venta END AS tipo_cambio,
+                u.usuario,
+                a.fecha_modificacion,
+                a_rel.referencia AS comprobante_modificado
+            FROM asiento_detalle ad
+            INNER JOIN asiento a ON ad.id_asiento = a.id_asiento
+            INNER JOIN plan_cuenta pc ON ad.id_plan_cuenta = pc.id_plan_cuenta
+            INNER JOIN sub_diario sd ON a.id_sub_diario = sd.id_sub_diario
+            LEFT JOIN tipo_operacion_asiento toa ON ad.id_tipo_operacion = toa.id_tipo_operacion
+            LEFT JOIN tipo_facturacion tf ON ad.id_tipo_facturacion = tf.id_tipo_facturacion
+            LEFT JOIN tercero t ON ad.id_tercero = t.id_tercero
+            LEFT JOIN tercero_tipo_documento ttd ON t.id_tercero_tipo_documento = ttd.id_tercero_tipo_documento
+            LEFT JOIN relacion_asiento ar ON ad.id_relacion = ar.id_relacion
+            LEFT JOIN asiento a_rel ON ar.asiento_relacionado = a_rel.id_asiento
+            LEFT JOIN tipo_cambio tc ON a.id_tipo_cambio = tc.id_tipo_cambio
+            LEFT JOIN usuario u ON a.id_usuario = u.id_usuario
+            WHERE a.id_empresa = @idEmpresa 
+              AND a.estado = true
+              AND a.id_mes = @idMes
+              AND sd.diario = @subDiario
+            GROUP BY 
+                a.referencia, a.fecha, a.fecha_ven, tf.cod, ad.serie_comprobante,
+                ttd.cod, t.documento, t.razon_social, ad.glosa,
+                a.moneda, tc.venta, u.usuario, a.fecha_modificacion, a_rel.referencia
+            ORDER BY 
+                CAST(SUBSTRING(a.referencia FROM 2) AS BIGINT), a.fecha;";
     }
 }
