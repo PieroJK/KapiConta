@@ -421,7 +421,7 @@ namespace Inmobiliaria_KapiConta.Services
                     fila.Moneda, idTipoCambio);
 
                 // ✅ EXONERADO → DEBE
-                if (fila.Exonerado != 0 && EsCuentaValida(fila.CtaExonerada))
+                if (fila.Exonerado != 0 && EsCuentaValida   (fila.CtaExonerada))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaExonerada],
                         fila.Exonerado, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,

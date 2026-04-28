@@ -91,7 +91,7 @@
                 </MenuItem>
                 <MenuItem Header="Listado">
                     <MenuItem Header="Listado de Asientos" Style="{StaticResource SubMenuItemStyle}"
-      Command="{Binding  ListadoAsientoCommand}"/>
+                     Command="{Binding  ListadoAsientoCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Utilidades"></MenuItem>
                 

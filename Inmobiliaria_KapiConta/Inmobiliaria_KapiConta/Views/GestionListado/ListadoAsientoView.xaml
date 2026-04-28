@@ -83,6 +83,13 @@
                 <DataGridTextColumn Header="Exonerada"      Binding="{Binding exonerada, StringFormat=N2}"                   Width="100"/>
                 <DataGridTextColumn Header="Inafecta"       Binding="{Binding inafecta, StringFormat=N2}"                    Width="100"/>
                 <DataGridTextColumn Header="V. Imponible"   Binding="{Binding valor_imponible, StringFormat=N2}"             Width="110"/>
+                <DataGridTextColumn Header="Operación"
+                    Binding="{Binding operacion}"
+                    Width="90"/>
+
+                <DataGridTextColumn Header="Debe"
+                    Binding="{Binding debe, StringFormat=N2}"
+                    Width="100"/>
                 <DataGridTextColumn Header="IGV"            Binding="{Binding igv, StringFormat=N2}"                         Width="100"/>
                 <DataGridTextColumn Header="ISC"            Binding="{Binding isc, StringFormat=N2}"                         Width="100"/>
                 <DataGridTextColumn Header="Total"          Binding="{Binding importe_total, StringFormat=N2}"               Width="110"/>

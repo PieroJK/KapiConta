@@ -68,13 +68,16 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public DashboardViewModel(MainViewModel mainVM)
         {
             _mainVM = mainVM;
-            
+
 
             // ✅ Cerrar pestaña
-            CerrarTabCommand = new RelayCommand<object>((param) =>
+            CerrarTabCommand = new RelayCommand<TabItemViewModel>(tab =>
             {
-                if (TabSeleccionado != null)
-                    Tabs.Remove(TabSeleccionado);
+                if (tab != null)
+                {
+                    Tabs.Remove(tab);
+                    tab.Contenido = null; // ✅ libera el ViewModel y sus colecciones
+                }
             });
 
             // Generación de UserControl para registrar empresa en el dashboard
