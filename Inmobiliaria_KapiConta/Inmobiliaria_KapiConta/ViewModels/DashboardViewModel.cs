@@ -1,16 +1,17 @@
 ﻿using Inmobiliaria_KapiConta.Helpers;
 using Inmobiliaria_KapiConta.Interfaces;
+using Inmobiliaria_KapiConta.Services;
+using Inmobiliaria_KapiConta.Services.PasswordService;
+using Inmobiliaria_KapiConta.Services.RolService;
+using Inmobiliaria_KapiConta.Services.UserService;
+using Inmobiliaria_KapiConta.Views.Enterprise;
+using Inmobiliaria_KapiConta.Views.GestionAsiento;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Diagnostics;
-using Inmobiliaria_KapiConta.Views.Enterprise;
-using Inmobiliaria_KapiConta.Services;
-using Inmobiliaria_KapiConta.Services.UserService;
-using Inmobiliaria_KapiConta.Services.PasswordService;
-using Inmobiliaria_KapiConta.Services.RolService;
 
 namespace Inmobiliaria_KapiConta.ViewModels
 {
@@ -54,6 +55,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         //listadoAsientoCommand
         public ICommand ListadoAsientoCommand { get; }
+
+        //Asiento prueba
+        public ICommand AgregarDetalleAsientoCommand { get; }
 
         private object _contenidoActual;
         public object ContenidoActual
@@ -320,6 +324,37 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
                     Tabs.Add(nuevaTab);
                     TabSeleccionado = nuevaTab;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] {DateTime.Now}");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            });
+
+            //probando
+            AgregarDetalleAsientoCommand = new RelayCommand(() =>
+            {
+                try
+                {
+                    if (Session.CurrentEmpresa == null) return;
+
+                    var moneda = "PEN"; // ✅ fijo para pruebas
+
+                    var vm = new AgregarDetalleAsientoViewModel(moneda);
+
+                    var window = new AgregarDetalleAsientoWindow
+                    {
+                        DataContext = vm,
+                        Owner = Application.Current.Windows
+                            .OfType<Window>()
+                            .FirstOrDefault(w => w.IsActive)
+                    };
+
+                    vm.Cerrar = () => window.Close();
+
+                    window.ShowDialog();
                 }
                 catch (Exception ex)
                 {
