@@ -14,7 +14,7 @@ namespace Inmobiliaria_KapiConta.Data
                 throw new Exception("DB_PASSWORD no definida");
 
             connectionString =
-                $"Host=localhost;Port=5432;Database=prueba;Username=postgres;Password={password}";
+                $"Host=localhost;Port=5432;Database=db_kapiconta;Username=postgres;Password={password}";
         }
 
         public static NpgsqlConnection Create()

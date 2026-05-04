@@ -11,7 +11,7 @@ namespace Inmobiliaria_KapiConta.Data.Queries
         public static string Listar = 
             @"
             SELECT 
-                    u.id_usuario,
+                    u.id_usuario AS Id,
                     u.usuario AS Username,
                     u.clave_hash AS PasswordHash,
                     u.nombre AS Nombre,

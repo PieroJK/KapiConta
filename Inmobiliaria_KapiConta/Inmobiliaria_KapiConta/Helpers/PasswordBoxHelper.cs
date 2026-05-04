@@ -46,11 +46,11 @@ namespace Inmobiliaria_KapiConta.Helpers
         }
         private static void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            var passwordBox = sender as PasswordBox;
-            if (passwordBox == null) return;
-
-            // Actualizar la propiedad adjunta cuando la contraseña cambia
-            SetBoundPassword(passwordBox, passwordBox.Password);
+            if (sender is PasswordBox passwordBox)
+            {
+                // Actualizar la propiedad BoundPassword cuando cambia el password
+                SetBoundPassword(passwordBox, passwordBox.Password);
+            }
         }
     }
 }

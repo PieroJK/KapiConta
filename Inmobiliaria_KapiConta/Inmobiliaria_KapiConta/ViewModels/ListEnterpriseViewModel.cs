@@ -56,8 +56,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
         
         private void GetSelectItemData()
         {
+            int id = SelectedItem.IdEmpresa;
+            Debug.WriteLine($"ID de la empresa: {SelectedItem.IdEmpresa}");
             string ruc = SelectedItem.Ruc;
+            Debug.WriteLine($"RUC de la empresa: {SelectedItem.Ruc}");
             string nombre = SelectedItem.Nombre;
+            Debug.WriteLine($"Nombre de la empresa {SelectedItem.Nombre}");
             bool estado =  SelectedItem.Estado;
             Debug.WriteLine(estado);
             string direccion = SelectedItem.Direccion;
@@ -80,9 +84,13 @@ namespace Inmobiliaria_KapiConta.ViewModels
         private void Volver() { /* Navegar atrás */ }
         private void Modificar() 
         {
+            Debug.WriteLine($"ID empresa: {SelectedItem.IdEmpresa}");
+            Debug.WriteLine($"Nombre empresa: {SelectedItem.Nombre}");
             try
             {
+                
                 _enterpriseService.UpdateEnterprise(SelectedItem);
+                Debug.WriteLine($"Empresa actualizada");
             }
             catch (Exception ex)
             {
