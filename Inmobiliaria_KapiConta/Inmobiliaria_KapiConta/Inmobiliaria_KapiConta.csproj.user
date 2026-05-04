@@ -20,6 +20,15 @@
     <Compile Update="Views\Enterprise\SeleccionEmpresaPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\GestionAsiento\AgregarDetalleAsientoWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\GestionAsiento\SelectorCuentaWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\GestionAsiento\SelectorTerceroWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\GestionListado\ListadoAsientoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

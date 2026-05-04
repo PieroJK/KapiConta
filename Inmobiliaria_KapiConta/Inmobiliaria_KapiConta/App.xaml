@@ -49,12 +49,10 @@
         <DataTemplate DataType="{x:Type vm:RegisterUserViewModel}">
             <loginViews:RegistrarUsuarioView />
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type vm:ListUsersViewModel}">
             <loginViews:ListadoUsuariosView />
         </DataTemplate>
-
-        
 
         <DataTemplate DataType="{x:Type vm:TerceroViewModel}">
             <terceroViews:RegistrarTerceroView/>
@@ -74,6 +72,18 @@
 
         <DataTemplate DataType="{x:Type vm:ListadoAsientoViewModel}">
             <listadoViews:ListadoAsientoView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:SelectorCuentaItem}">
+            <asientoViews:SelectorCuentaWindow/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:SelectorTerceroViewModel}">
+            <asientoViews:SelectorTerceroWindow/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:AgregarDetalleAsientoViewModel}">
+            <asientoViews:AgregarDetalleAsientoWindow/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">

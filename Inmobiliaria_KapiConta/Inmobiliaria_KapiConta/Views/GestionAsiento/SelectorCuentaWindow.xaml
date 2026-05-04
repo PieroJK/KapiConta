@@ -1,0 +1,77 @@
+﻿<Window x:Class="Inmobiliaria_KapiConta.Views.GestionAsiento.SelectorCuentaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Buscar Cuenta"
+        Height="430" Width="700"
+        WindowStartupLocation="CenterOwner"
+        Background="#2E4458">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <!-- BUSCADOR -->
+        <TextBox Grid.Row="0"
+                 Height="26"
+                 VerticalAlignment="Center"
+                 VerticalContentAlignment="Center"
+                 Padding="5,0"
+                 Background="#1E2E3E"
+                 Foreground="White"
+                 BorderBrush="#4A6080"
+                 Text="{Binding TextoBusqueda, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- TABLA -->
+        <DataGrid Grid.Row="1"
+                  Margin="0,10,0,10"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="All"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  RowHeight="26"
+                  FontSize="12"
+                  MouseDoubleClick="DG_DoubleClick"
+                  ItemsSource="{Binding Cuentas}"
+                  SelectedItem="{Binding CuentaSeleccionada, Mode=TwoWay}">
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#007ACC"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Código" Binding="{Binding CodigoCuenta}" Width="120"/>
+                <DataGridTextColumn Header="Nombre" Binding="{Binding NombreCuenta}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- BOTÓN SELECCIONAR -->
+        <Button Grid.Row="2"
+                Width="130" Height="28"
+                HorizontalAlignment="Right"
+                Content="Seleccionar"
+                Background="#2BBF5A"
+                Foreground="White"
+                FontWeight="Bold"
+                BorderThickness="0"
+                Command="{Binding SeleccionarCommand}"/>
+
+    </Grid>
+</Window>
