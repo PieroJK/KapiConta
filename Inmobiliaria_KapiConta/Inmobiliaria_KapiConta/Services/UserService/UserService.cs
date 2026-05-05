@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Inmobiliaria_KapiConta.Data;
 using Inmobiliaria_KapiConta.Data.Queries;
 using Inmobiliaria_KapiConta.Models;
@@ -27,7 +28,14 @@ namespace Inmobiliaria_KapiConta.Services.UserService
                 return usuario;
             },
             splitOn: "idrol");
-                
+            Debug.WriteLine($"USER SERVICE");
+            foreach (var item in lista)
+            {
+                Debug.WriteLine($"Id: {item.Id}");
+                Debug.WriteLine($"Username: {item.Username}");
+                Debug.WriteLine($"Password: {item.PasswordHash}");
+            }
+
             return lista.ToList(); //La propiedad ToList() convierte la lista de tipo IEnumerable a List<Usuario> 
         }
         public void AddUser(Usuario u, string plainTextPassword)
@@ -40,7 +48,6 @@ namespace Inmobiliaria_KapiConta.Services.UserService
                 clave = hashedPassword,
                 nombre = u.Nombre,
                 rol = u.Rol.IdRol
-                //rol = rolId
             });
             Debug.WriteLine($"ROWS AFFECTED: {rowAdded}");
         }
@@ -48,14 +55,32 @@ namespace Inmobiliaria_KapiConta.Services.UserService
         public void UpdateUser(Usuario u)
         {
             using var conn = DbConnectionFactory.Create();
-            var id = conn.QuerySingle(UsuarioQuery.Modificar, new
+            Debug.WriteLine($"PAYLOAD");
+            Debug.WriteLine($"ID: {u.Id}");
+            Debug.WriteLine($"USERNAME: {u.Username}");
+            Debug.WriteLine($"PASSWORD: {u.PasswordHash}");
+            Debug.WriteLine($"NAME: {u.Nombre}");
+            Debug.WriteLine($"STATE: {u.Estado}");
+            Debug.WriteLine($"ROLE: {u.Rol.Nombre}");
+            Debug.WriteLine($"ROLE ID: {u.Rol.IdRol}");
+
+            try
             {
-                id_usuario = u.Id,
-                usuario = u.Username,
-                clave_hash = u.PasswordHash,
-                nombre = u.Nombre,
-                id_rol = u.Rol.IdRol 
-            });
+                string hashedPassword = _passwordService.HashPassword(u.PasswordHash);
+                var id = conn.QuerySingle(UsuarioQuery.Modificar, new
+                {
+                    idUsuario = u.Id,
+                    usuario = u.Username,
+                    password = hashedPassword,
+                    nombre = u.Nombre,
+                    idRol = u.Rol.IdRol,
+                    estado = u.Estado
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al registrar usuario {ex}");
+            }
         }
         public void DeleteUser(Usuario u) 
         {

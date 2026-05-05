@@ -64,6 +64,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 // Extracción segura de datos
                 string idUsuario = SelectedUser.Id.ToString() ?? "0";
                 string username = SelectedUser.Username ?? string.Empty;
+                string password = SelectedUser.PasswordHash;
                 string nombre = SelectedUser.Nombre ?? string.Empty;
                 string rol = SelectedUser.Rol?.Nombre ?? "Sin rol";
                 string estado = SelectedUser.Estado == true ? "Activo" : "Inactivo";
@@ -73,6 +74,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     $"[GetSelectItemData] " +
                     $"ID: {idUsuario} | " +
                     $"User: {username} | " +
+                    $"Password: {password} | " +
                     $"Nombre: {nombre} | " +
                     $"Rol: {rol} | " +
                     $"Estado: {estado}"
@@ -91,7 +93,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
             {
                 Items = _userService.ListUser();
                 Debug.WriteLine($"Cantidad de la lista: {Items.Count()}");
-                Debug.WriteLine($"Tipo de la variable: {Items.GetType}");
+                foreach (var item in Items)
+                {
+                    Debug.WriteLine($"Id: {item.Id}");
+                    Debug.WriteLine($"Username: {item.Username}");
+                    Debug.WriteLine($"Password: {item.PasswordHash}");
+                }
             }
             catch (Exception ex)
             {
@@ -103,7 +110,17 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void EditUser ()
         {
-            _userService.UpdateUser(SelectedUser);
+            Debug.WriteLine($"Id Usuario: {SelectedUser.Id}");
+            Debug.WriteLine($"Nombre de usuario: {SelectedUser.Username}");
+            Debug.WriteLine($"Password: {SelectedUser.PasswordHash}");
+            try
+            {
+                _userService.UpdateUser(SelectedUser);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR AL EDITAR EL USUARIO: {ex}");
+            }
         }
         
         public ListUsersViewModel(IUserService userService) 

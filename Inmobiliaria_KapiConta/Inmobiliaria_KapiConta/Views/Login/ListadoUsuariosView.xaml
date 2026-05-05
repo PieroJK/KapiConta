@@ -2,12 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:helpers="clr-namespace:Inmobiliaria_KapiConta.Helpers"
              xmlns:converter="clr-namespace:Inmobiliaria_KapiConta.Helpers.Converters">
-             
+
     <UserControl.Resources>
-        
-            <converter:BoolToEstadoConverter x:Key="BoolToEstado"/>
-       
+
+        <converter:BoolToEstadoConverter x:Key="BoolToEstado"/>
+
         <!-- Item de la lista -->
         <Style x:Key="UserListItem" TargetType="ListViewItem">
             <Setter Property="Padding"                    Value="10,10"/>
@@ -349,7 +350,7 @@
                                                FontSize="12"
                                                VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="1"
-                                               Text="{Binding Id}"
+                                               Text="{Binding Rol.Nombre}"
                                                FontSize="11"
                                                Foreground="#888888"
                                                HorizontalAlignment="Right"
@@ -409,6 +410,7 @@
                         <!-- Clave -->
                         <PasswordBox x:Name="PbClave"
                                      Style="{StaticResource InputPass}"
+                                     helpers:PasswordBoxHelper.BoundPassword="{Binding SelectedUser.PasswordHash, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Margin="0,0,0,12"/>
 
                         <!-- Nombre empleado -->
@@ -420,8 +422,8 @@
                         <!-- Rol + Estado en fila -->
                         <Grid Margin="0,0,0,28">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="130"/>
                             </Grid.ColumnDefinitions>
 
