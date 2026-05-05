@@ -59,6 +59,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         //Asiento prueba
         public ICommand AgregarDetalleAsientoCommand { get; }
 
+        public ICommand AgregarAsientoManualCommand { get; }
+
         private object _contenidoActual;
         public object ContenidoActual
         {
@@ -364,6 +366,39 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 }
             });
 
+            //Asiento manual
+            AgregarAsientoManualCommand = new RelayCommand(() =>
+            {
+                try
+                {
+                    if (Session.CurrentEmpresa == null) return;
+
+                    var existente = Tabs.FirstOrDefault(t => t.Titulo == "Asiento Mnaual");
+
+                    if (existente != null)
+                    {
+                        TabSeleccionado = existente;
+                        return;
+                    }
+
+                    var vm = new AsientoManualViewModel(); // 🔥 aquí probablemente rompe
+
+                    var nuevaTab = new TabItemViewModel
+                    {
+                        Titulo = "Asiento Manual",
+                        Contenido = vm
+                    };
+
+                    Tabs.Add(nuevaTab);
+                    TabSeleccionado = nuevaTab;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] {DateTime.Now}");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            });
 
         }
 

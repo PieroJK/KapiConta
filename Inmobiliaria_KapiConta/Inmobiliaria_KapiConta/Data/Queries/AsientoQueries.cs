@@ -76,6 +76,14 @@
               AND a.id_periodo  = @idPeriodo
             ORDER BY a.fecha DESC;";
 
+        public static string ObtenerReferenciasPorFiltro = @"
+    SELECT referencia
+    FROM asiento
+    WHERE id_empresa = @idEmpresa
+      AND id_mes = @idMes
+      AND id_sub_diario = @idSubDiario
+      AND estado = true;";
+
         public static string ObtenerPorId = @"
             SELECT
                 a.id_asiento,
@@ -189,5 +197,28 @@ GROUP BY
     a.moneda, tc.venta, u.usuario, a.fecha_modificacion, a_rel.referencia
 ORDER BY 
     CAST(SUBSTRING(a.referencia FROM 2) AS BIGINT), a.fecha;";
+
+        public static string ObtenerIdPorReferencia = @"
+    SELECT id_asiento
+    FROM asiento
+    WHERE referencia = @referencia
+      AND estado = true
+    ORDER BY id_asiento DESC
+    LIMIT 1;";
+
+        public static string InsertarRelacion = @"
+    INSERT INTO relacion_asiento
+    (
+        asiento_origen,
+        asiento_relacionado,
+        estado
+    )
+    VALUES
+    (
+        @asiento_origen,
+        @asiento_relacionado,
+        true
+    )
+    RETURNING id_relacion;";
     }
 }

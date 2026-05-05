@@ -31,6 +31,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public string MonedaCabecera { get; }
         public Action Cerrar { get; set; }
 
+        public Action<AsientoDetalle> OnAgregar { get; set; }
+
         // =========================
         // COMBOS
         // =========================
@@ -391,7 +393,91 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private void Agregar()
         {
-            // 🔜 Se implementará después
+            try
+            {
+                // =========================
+                // VALIDACIONES (igual que antes)
+                // =========================
+
+                if (string.IsNullOrWhiteSpace(CuentaCodigo))
+                {
+                    MessageBox.Show("Debes ingresar una cuenta.");
+                    return;
+                }
+
+                if (_cuentaSeleccionada == null)
+                {
+                    MessageBox.Show("La cuenta ingresada no existe.");
+                    return;
+                }
+
+                if (!decimal.TryParse(Importe?.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal importe))
+                {
+                    MessageBox.Show("El importe no tiene un formato válido.");
+                    return;
+                }
+
+                if (importe < 0)
+                {
+                    MessageBox.Show("El importe no debe ser negativo.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Glosa))
+                {
+                    MessageBox.Show("Debes ingresar una glosa.");
+                    return;
+                }
+
+                if (!string.IsNullOrWhiteSpace(Ruc) && _terceroSeleccionado == null)
+                {
+                    MessageBox.Show("El RUC ingresado no existe.");
+                    return;
+                }
+
+                if ((TipoDocumentoSeleccionado?.Cod == "07" || TipoDocumentoSeleccionado?.Cod == "08")
+                    && string.IsNullOrWhiteSpace(AsientoReferencia))
+                {
+                    MessageBox.Show("Debe seleccionar un asiento de referencia.");
+                    return;
+                }
+
+                // =========================
+                // CREAR RESULTADO
+                // =========================
+
+                var item = new AsientoDetalle
+                {
+                    IdPlanCuenta = _cuentaSeleccionada.IdPlanCuenta,
+                    Moneda = MonedaCabecera,
+                    Debe = DebeHaberSeleccionado == "DEBE" ? importe : 0m,
+                    Haber = DebeHaberSeleccionado == "HABER" ? importe : 0m,
+                    IdTipoOperacion = TipoOperacionSeleccionado?.IdTipoOperacion,
+                    IdTipoFacturacion = TipoDocumentoSeleccionado?.IdTipoFacturacion,
+                    IdTercero = _terceroSeleccionado?.IdTercero,
+                    Glosa = Glosa,
+                    SerieComprobante = Documento,
+
+                    // ✅ HIDRATAR NAVEGACIÓN para que el DataGrid pueda mostrar los datos
+                    PlanCuenta = _cuentaSeleccionada,
+
+                    TipoFacturacion = TipoDocumentoSeleccionado,
+
+                    Tercero = _terceroSeleccionado
+                };
+
+                // 🔥 ENVÍO AL PADRE
+                OnAgregar?.Invoke(item);
+
+                // 🔥 CERRAR
+                Cerrar?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error: {ex.Message}\n\n{ex.StackTrace}"
+                );
+            }
         }
 
         private void Cancelar()

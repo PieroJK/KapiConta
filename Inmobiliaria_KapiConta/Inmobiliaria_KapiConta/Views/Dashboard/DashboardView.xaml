@@ -69,7 +69,7 @@
                     <MenuItem Header="Ingresar nueva empresa" Style="{StaticResource SubMenuItemStyle}"></MenuItem>
                 </MenuItem>
                 <MenuItem Header="Procesos">
-                    <MenuItem Header="Ingresar Asiento" Style="{StaticResource SubMenuItemStyle}" Command="{Binding AgregarDetalleAsientoCommand }"></MenuItem>
+                    <MenuItem Header="Ingresar Asiento" Style="{StaticResource SubMenuItemStyle}" Command="{Binding AgregarAsientoManualCommand }"></MenuItem>
                     <MenuItem Header="Importar Asiento" Style="{StaticResource SubMenuItemStyle}" Command="{Binding ImportarAsientoCommand }"></MenuItem>
                 </MenuItem>
                 

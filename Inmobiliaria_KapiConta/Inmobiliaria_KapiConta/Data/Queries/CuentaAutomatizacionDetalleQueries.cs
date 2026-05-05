@@ -33,5 +33,6 @@
             (id_automatizacion, id_cuenta_relacionada, tipo_movimiento, porcentaje)
             VALUES (@idAuto, @idCuenta, @tipo, @porcentaje);
         ";
+
     }
 }

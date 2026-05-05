@@ -102,5 +102,6 @@
         public static string EliminarPorAsiento = @"
             DELETE FROM asiento_detalle
             WHERE id_asiento = @idAsiento;";
+
     }
 }

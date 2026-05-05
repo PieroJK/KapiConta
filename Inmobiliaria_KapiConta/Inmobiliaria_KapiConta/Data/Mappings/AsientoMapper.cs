@@ -21,11 +21,18 @@ namespace Inmobiliaria_KapiConta.Data.Mappings
                                         ? Convert.ToInt32(dr["id_usuario"]) : null,
                 Referencia = dr["referencia"] != DBNull.Value
                                         ? dr["referencia"].ToString() : null,
-                Fecha = Convert.ToDateTime(dr["fecha"]),
+                Fecha = dr["fecha"] is DateOnly d
+    ? d.ToDateTime(TimeOnly.MinValue)
+    : Convert.ToDateTime(dr["fecha"]),
                 Moneda = dr["moneda"]?.ToString() ?? "PEN",
-                FechaVen = dr["fecha_ven"] != DBNull.Value
-                                        ? Convert.ToDateTime(dr["fecha_ven"]) : null,
-                FechaModificacion = Convert.ToDateTime(dr["fecha_modificacion"]),
+                FechaVen = dr["fecha_ven"] == DBNull.Value
+    ? null
+    : dr["fecha_ven"] is DateOnly dv
+        ? dv.ToDateTime(TimeOnly.MinValue)
+        : Convert.ToDateTime(dr["fecha_ven"]),
+                FechaModificacion = dr["fecha_modificacion"] is DateOnly dm
+    ? dm.ToDateTime(TimeOnly.MinValue)
+    : Convert.ToDateTime(dr["fecha_modificacion"]),
                 Estado = Convert.ToBoolean(dr["estado"])
             };
 
