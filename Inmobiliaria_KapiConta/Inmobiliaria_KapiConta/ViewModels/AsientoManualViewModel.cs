@@ -51,12 +51,23 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand AbrirCajaAsientoCommand { get; set; }
 
-        // En la sección COMMANDS
         public ICommand AbrirPendientesCommand { get; set; }
+
+        public ICommand RevertirDetalleCommand { get; set; }
+
+        public ICommand AplicarDiferenciaCommand { get; set; }
 
         // =========================
         // SELECCIONES
         // =========================
+
+        // Propiedad para la fila seleccionada — en la sección SELECCIONES
+        private AsientoDetalle _detalleSeleccionado;
+        public AsientoDetalle DetalleSeleccionado
+        {
+            get => _detalleSeleccionado;
+            set { _detalleSeleccionado = value; OnPropertyChanged(); }
+        }
 
         private Mes _mesSeleccionado;
         public Mes MesSeleccionado
@@ -206,6 +217,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
             Meses = new ObservableCollection<Mes>(_mesService.ObtenerMeses());
             SubDiarios = new ObservableCollection<SubDiario>(_subDiarioService.ObtenerSubDiarios());
             Libros = new ObservableCollection<Libro>(_libroService.Listar());
+            RevertirDetalleCommand = new RelayCommand(RevertirDetalle);
+            AplicarDiferenciaCommand = new RelayCommand(AplicarDiferencia);
 
             OnPropertyChanged(nameof(Meses));
             OnPropertyChanged(nameof(SubDiarios));
@@ -254,6 +267,91 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // ===========================
 
         // El método migrado — en la sección METODOS BOTONES INFERIORES
+        private void AplicarDiferencia()
+        {
+            decimal totalDebe = Detalle.Sum(x => x.Debe);
+            decimal totalHaber = Detalle.Sum(x => x.Haber);
+            decimal diferencia = totalDebe - totalHaber;
+
+            if (Math.Round(diferencia, 2) == 0)
+            {
+                MessageBox.Show("El asiento ya está cuadrado.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // =========================
+            // ELIMINAR AJUSTES ANTERIORES
+            // =========================
+            var ajustes = Detalle
+                .Where(x => x.Glosa == "Ajuste por diferencia")
+                .ToList();
+
+            foreach (var item in ajustes)
+                Detalle.Remove(item);
+
+            // =========================
+            // CALCULAR CUENTA Y MONTO
+            // =========================
+            bool vaAlDebe = diferencia < 0;
+            decimal monto = Math.Abs(diferencia);
+            string cuentaCodigo = vaAlDebe ? "676" : "776";
+
+            // =========================
+            // BUSCAR CUENTA EN BD
+            // =========================
+            var service = new PlanCuentasService(Session.CurrentEmpresa.IdEmpresa);
+            var cuenta = service.ObtenerPorCodigo(cuentaCodigo);
+
+            if (cuenta == null)
+            {
+                MessageBox.Show($"No se encontró la cuenta {cuentaCodigo}.", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // =========================
+            // AGREGAR LÍNEA DE AJUSTE
+            // =========================
+            Detalle.Add(new AsientoDetalle
+            {
+                IdPlanCuenta = cuenta.IdPlanCuenta,
+                PlanCuenta = cuenta,
+                Moneda = MonedaSeleccionada,
+                Debe = vaAlDebe ? monto : 0m,
+                Haber = vaAlDebe ? 0m : monto,
+                Glosa = "Ajuste por diferencia"
+            });
+
+            // =========================
+            // ACTUALIZAR TOTALES Y SELECCIÓN
+            // =========================
+            RecalcularTotales();
+
+            // 🔥 seleccionar última fila (equivalente al ScrollIntoView del behind)
+            DetalleSeleccionado = Detalle.Last();
+        }
+        private void RevertirDetalle()
+        {
+            if (DetalleSeleccionado == null)
+            {
+                MessageBox.Show("Selecciona una fila para revertir.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            decimal debeOriginal = DetalleSeleccionado.Debe;
+            decimal haberOriginal = DetalleSeleccionado.Haber;
+
+            DetalleSeleccionado.Debe = haberOriginal;
+            DetalleSeleccionado.Haber = debeOriginal;
+
+            // 🔥 forzar refresco visual del DataGrid
+            var index = Detalle.IndexOf(DetalleSeleccionado);
+            Detalle[index] = DetalleSeleccionado;
+
+            RecalcularTotales();
+        }
         private void AbrirPendientes()
         {
             try

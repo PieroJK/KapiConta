@@ -1,10 +1,18 @@
-﻿namespace Inmobiliaria_KapiConta.Models
-{
-    public class AsientoDetalle
-    {
-        public int IdAsientoDetalle { get; set; }
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-        // FKs
+namespace Inmobiliaria_KapiConta.Models
+{
+    public class AsientoDetalle : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string prop = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
+        // =========================
+        // IDs
+        // =========================
+        public int IdAsientoDetalle { get; set; }
         public int IdAsiento { get; set; }
         public int IdPlanCuenta { get; set; }
         public int? IdTipoFacturacion { get; set; }
@@ -13,14 +21,48 @@
         public int? IdTipoOperacion { get; set; }
         public int? IdCosto { get; set; }
 
-        // Campos propios
-        public string Moneda { get; set; } = "PEN";
-        public decimal Debe { get; set; } = 0;
-        public decimal Haber { get; set; } = 0;
-        public string? SerieComprobante { get; set; }
-        public string Glosa { get; set; } = string.Empty;
+        // =========================
+        // CAMPOS CON NOTIFICACIÓN
+        // =========================
 
-        // Navegación
+        private string _moneda = "PEN";
+        public string Moneda
+        {
+            get => _moneda;
+            set { _moneda = value; OnPropertyChanged(); }
+        }
+
+        private decimal _debe = 0;
+        public decimal Debe
+        {
+            get => _debe;
+            set { _debe = value; OnPropertyChanged(); }
+        }
+
+        private decimal _haber = 0;
+        public decimal Haber
+        {
+            get => _haber;
+            set { _haber = value; OnPropertyChanged(); }
+        }
+
+        private string? _serieComprobante;
+        public string? SerieComprobante
+        {
+            get => _serieComprobante;
+            set { _serieComprobante = value; OnPropertyChanged(); }
+        }
+
+        private string _glosa = string.Empty;
+        public string Glosa
+        {
+            get => _glosa;
+            set { _glosa = value; OnPropertyChanged(); }
+        }
+
+        // =========================
+        // NAVEGACIÓN
+        // =========================
         public Asiento? Asiento { get; set; }
         public PlanCuenta? PlanCuenta { get; set; }
         public TipoFacturacion? TipoFacturacion { get; set; }

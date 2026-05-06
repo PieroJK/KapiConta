@@ -172,7 +172,46 @@ namespace Inmobiliaria_KapiConta.Services
             cmd.ExecuteNonQuery();
         }
 
+        // Agrega esto en PlanCuentasService.cs
 
+        public PlanCuenta? ObtenerPorCodigo(string codigo)
+        {
+            using var cn = DbConnectionFactory.Create();
+            cn.Open();
+
+            string sql = @"
+        SELECT
+            id_plan_cuenta,
+            id_empresa,
+            id_plan_cuenta_base,
+            codigo,
+            descripcion,
+            nivel,
+            codigo_padre,
+            id_elemento,
+            id_balance,
+            analisis,
+            es_base,
+            tiene_automatizacion,
+            estado
+        FROM plan_cuenta
+        WHERE id_empresa   = @idEmpresa
+          AND codigo       LIKE @codigo
+          AND estado       = true
+        ORDER BY codigo
+        LIMIT 1;";
+
+            using var cmd = new NpgsqlCommand(sql, cn);
+            cmd.Parameters.AddWithValue("@idEmpresa", _empresaId);
+            cmd.Parameters.AddWithValue("@codigo", codigo + "%");
+
+            using var dr = cmd.ExecuteReader();
+
+            if (dr.Read())
+                return PlanCuentaMapper.Map(dr);
+
+            return null;
+        }
 
         #endregion
     }

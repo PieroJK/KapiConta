@@ -250,7 +250,8 @@
                               ColumnHeaderHeight="28"
                               HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Auto"
-                              ItemsSource="{Binding Detalle}">
+                              ItemsSource="{Binding Detalle}"
+                              SelectedItem="{Binding DetalleSeleccionado}">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="#2A2A2A"/>
@@ -438,11 +439,11 @@
 
                         <Button Grid.Column="2" Content="Dif. de&#10;Cambio" Margin="0,5,5,5"
                             Background="#31B66F" Foreground="White" FontWeight="Bold" FontSize="11"
-                            />
+                            Command="{Binding AplicarDiferenciaCommand}"/>
 
                         <Button Grid.Column="3" Content="Revertir" Margin="0,5,5,5"
                             Background="#B38757" Foreground="White" FontWeight="Bold" FontSize="12"
-                            />
+                            Command="{Binding RevertirDetalleCommand}"/>
 
                         <Button Grid.Column="4" Content="Pendiente" Margin="0,5,5,5"
                             Background="#5569D6" Foreground="White" FontWeight="Bold" FontSize="12"
