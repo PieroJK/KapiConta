@@ -1,0 +1,77 @@
+﻿<Window x:Class="Inmobiliaria_KapiConta.Views.GestionAsiento.CajaAsientoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Inmobiliaria_KapiConta.Views.GestionAsiento"
+        mc:Ignorable="d"
+        Title="CajaAsientoWindow" 
+        Height="500" Width="700"
+Background="#202020"
+WindowStartupLocation="CenterScreen">
+    <Grid Margin="15">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 🔹 TABLA DE CUENTAS -->
+        <DataGrid x:Name="dgCuentas"
+       AutoGenerateColumns="False"
+       Background="#1E1E1E"
+       BorderBrush="#444"
+       Grid.Row="0"
+       SelectionMode="Single"
+       SelectionUnit="FullRow"
+       ItemsSource="{Binding Cuentas}"
+       SelectedItem="{Binding CuentaSeleccionada}">
+
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style>
+            </DataGrid.CellStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Código" Binding="{Binding Codigo}" Width="150"/>
+                <DataGridTextColumn Header="Nombre" Binding="{Binding Descripcion}" Width="*"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <!-- 🔹 GLOSA -->
+        <StackPanel Grid.Row="1" Margin="0,10">
+            <TextBlock Text="Glosa:" Foreground="White"/>
+            <TextBox x:Name="txtGlosa"
+                  Height="30"
+                  Background="#1E1E1E"
+                  Foreground="White"
+                  BorderBrush="#444"
+                  Text="{Binding Glosa, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <!-- 🔹 BOTONES -->
+        <StackPanel Grid.Row="2"
+                 Orientation="Horizontal"
+                 HorizontalAlignment="Right"
+                 Margin="0,15,0,0">
+
+            <Button Content="Aceptar"
+                 Width="100"
+                 Margin="0,0,10,0"
+                 Background="#007ACC"
+                 Foreground="White"
+                 Command="{Binding AceptarCommand}"/>
+
+            <Button Content="Cancelar"
+                 Width="100"
+                 Background="#444"
+                 Foreground="White"
+                 Command="{Binding CancelarCommand}"/>
+
+        </StackPanel>
+
+    </Grid>
+</Window>

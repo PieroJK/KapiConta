@@ -5,6 +5,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Windows;
 
 namespace Inmobiliaria_KapiConta.Services
 {
@@ -16,7 +17,7 @@ namespace Inmobiliaria_KapiConta.Services
             cn.Open();
 
             using var tx = cn.BeginTransaction();
-
+            MessageBox.Show("SERVICE: Guardando asiento");
             try
             {
                 // 1. Insertar cabecera
@@ -68,7 +69,7 @@ namespace Inmobiliaria_KapiConta.Services
             }
         }
 
-        public DataTable ObtenerAsientos(int idEmpresa, int idMes, string subDiario)
+        public DataTable ObtenerAsientos(int idEmpresa, int idMes, int idSubDiario)
         {
             using var cn = DbConnectionFactory.Create();
             cn.Open();
@@ -76,7 +77,7 @@ namespace Inmobiliaria_KapiConta.Services
             using var cmd = new NpgsqlCommand(AsientoQueries.ListarAsientos, cn);
             cmd.Parameters.AddWithValue("@idEmpresa", idEmpresa);
             cmd.Parameters.AddWithValue("@idMes", idMes);
-            cmd.Parameters.AddWithValue("@subDiario", subDiario);
+            cmd.Parameters.AddWithValue("@idSubDiario", idSubDiario);
 
             using var reader = cmd.ExecuteReader();
             var dt = new DataTable();
@@ -148,9 +149,9 @@ namespace Inmobiliaria_KapiConta.Services
         }
 
         private int InsertarCabecera(
-        NpgsqlConnection cn,
-        NpgsqlTransaction tx,
-        Asiento asiento)
+    NpgsqlConnection cn,
+    NpgsqlTransaction tx,
+    Asiento asiento)
         {
             using var cmd = new NpgsqlCommand(AsientoQueries.Insertar, cn, tx);
 
@@ -172,15 +173,18 @@ namespace Inmobiliaria_KapiConta.Services
             cmd.Parameters.AddWithValue("@idUsuario",
                 (object?)asiento.IdUsuario ?? DBNull.Value);
 
-            using var reader = cmd.ExecuteReader();
+            int idAsiento;
 
-            if (reader.Read())
+            using (var reader = cmd.ExecuteReader())
             {
-                var nuevo = Inmobiliaria_KapiConta.Data.Mappings.AsientoMapper.Map(reader);
-                return nuevo.IdAsiento;
-            }
+                if (!reader.Read())
+                    throw new Exception("No se pudo insertar el asiento.");
 
-            throw new Exception("No se pudo insertar el asiento.");
+                var nuevo = Inmobiliaria_KapiConta.Data.Mappings.AsientoMapper.Map(reader);
+                idAsiento = nuevo.IdAsiento;
+            } // 👈 AQUÍ se cierra el reader
+
+            return idAsiento;
         }
 
         private int ObtenerIdAsientoPorReferencia(

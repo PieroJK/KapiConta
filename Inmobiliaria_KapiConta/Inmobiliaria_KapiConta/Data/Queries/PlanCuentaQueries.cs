@@ -82,6 +82,28 @@ RETURNING *;
             WHERE id_plan_cuenta = @id;
         ";
 
+        public static string ListarCajaBancos = @"
+    SELECT 
+        id_plan_cuenta,
+        id_empresa,
+        id_plan_cuenta_base,
+        codigo,
+        descripcion,
+        nivel,
+        codigo_padre,
+        id_elemento,
+        id_balance,
+        analisis,
+        es_base,
+        tiene_automatizacion,
+        estado
+    FROM plan_cuenta
+    WHERE id_empresa = @idEmpresa
+      AND codigo LIKE '10%'   -- 🔥 CAJA Y BANCOS
+      AND estado = true
+    ORDER BY codigo;
+";
+
 
     }
 }

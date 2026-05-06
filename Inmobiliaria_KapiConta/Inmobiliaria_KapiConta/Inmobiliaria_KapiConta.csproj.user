@@ -26,7 +26,13 @@
     <Compile Update="Views\GestionAsiento\AsientosWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\GestionAsiento\CajaAsientoWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\GestionAsiento\SelectorCuentaWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\GestionAsiento\SelectorPendientesWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\GestionAsiento\SelectorTerceroWindow.xaml.cs">

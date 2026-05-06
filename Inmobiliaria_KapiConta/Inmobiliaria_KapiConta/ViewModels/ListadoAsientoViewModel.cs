@@ -138,7 +138,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 _dtAsientos = _service.ObtenerAsientos(
                     Session.CurrentEmpresa.IdEmpresa,
                     MesSeleccionado.IdMes,
-                    SubDiarioSeleccionado.Diario);
+                    SubDiarioSeleccionado.IdSubDiario);
 
                 Asientos = _dtAsientos.DefaultView;
             }

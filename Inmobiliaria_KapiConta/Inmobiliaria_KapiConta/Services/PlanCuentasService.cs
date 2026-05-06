@@ -64,6 +64,25 @@ namespace Inmobiliaria_KapiConta.Services
             return lista;
         }
 
+        public List<PlanCuenta> ListarCajaBancos()
+        {
+            var lista = new List<PlanCuenta>();
+
+            using var cn = DbConnectionFactory.Create();
+            cn.Open();
+
+            using var cmd = new NpgsqlCommand(PlanCuentaQueries.ListarCajaBancos, cn);
+            cmd.Parameters.AddWithValue("@idEmpresa", _empresaId);
+
+            using var dr = cmd.ExecuteReader();
+
+            while (dr.Read())
+            {
+                lista.Add(PlanCuentaMapper.Map(dr));
+            }
+
+            return lista;
+        }
         #endregion
 
         #region CRUD

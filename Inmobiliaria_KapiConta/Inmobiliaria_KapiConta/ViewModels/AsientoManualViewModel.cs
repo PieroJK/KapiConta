@@ -5,6 +5,7 @@ using Inmobiliaria_KapiConta.Views.GestionAsiento;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -16,6 +17,12 @@ namespace Inmobiliaria_KapiConta.ViewModels
         private readonly MesService _mesService;
         private readonly SubDiarioService _subDiarioService;
         private readonly LibroService _libroService;
+        // =========================
+        // FLAG INTERNO
+        // =========================
+        private bool _limpiando = false;
+
+        private bool _guardando = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = null)
@@ -40,6 +47,13 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand GuardarCommand { get; set; }
 
+        public ICommand BorrarTodoCommand { get; set; }
+
+        public ICommand AbrirCajaAsientoCommand { get; set; }
+
+        // En la sección COMMANDS
+        public ICommand AbrirPendientesCommand { get; set; }
+
         // =========================
         // SELECCIONES
         // =========================
@@ -52,7 +66,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
             {
                 _mesSeleccionado = value;
                 OnPropertyChanged();
-                GenerarReferenciaTemporal();
+
+                if (!_limpiando)          // 👈 solo si NO estamos limpiando
+                    GenerarReferenciaTemporal();
             }
         }
 
@@ -68,7 +84,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
                 // 🔥 llenar nombre automáticamente
                 SubDiarioNombre = value?.Nombre ?? "";
 
-                GenerarReferenciaTemporal();
+                if (!_limpiando)          // 👈 solo si NO estamos limpiando
+                    GenerarReferenciaTemporal();
             }
         }
 
@@ -131,6 +148,34 @@ namespace Inmobiliaria_KapiConta.ViewModels
             set { _referencia = value; OnPropertyChanged(); }
         }
 
+        private string _totalDebe = "0.00";
+        public string TotalDebe
+        {
+            get => _totalDebe;
+            set { _totalDebe = value; OnPropertyChanged(); }
+        }
+
+        private string _totalHaber = "0.00";
+        public string TotalHaber
+        {
+            get => _totalHaber;
+            set { _totalHaber = value; OnPropertyChanged(); }
+        }
+
+        private string _diferencia = "0.00";
+        public string Diferencia
+        {
+            get => _diferencia;
+            set { _diferencia = value; OnPropertyChanged(); }
+        }
+
+        private string _fechaEstado = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+        public string FechaEstado
+        {
+            get => _fechaEstado;
+            set { _fechaEstado = value; OnPropertyChanged(); }
+        }
+
         // =========================
         // CONSTRUCTOR
         // =========================
@@ -139,6 +184,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
         {
             AgregarDetalleAsientoCommand = new RelayCommand(AbrirAgregarDetalleAsiento);
             GuardarCommand = new RelayCommand(GuardarAsiento);
+            BorrarTodoCommand = new RelayCommand(BorrarTodo);
+            AbrirCajaAsientoCommand = new RelayCommand(AbrirCajaAsiento);
+            AbrirPendientesCommand = new RelayCommand(AbrirPendientes);
 
             _mesService = new MesService();
             _subDiarioService = new SubDiarioService();
@@ -205,6 +253,110 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // METODOS BOTONES INFERIORES
         // ===========================
 
+        // El método migrado — en la sección METODOS BOTONES INFERIORES
+        private void AbrirPendientes()
+        {
+            try
+            {
+                if (Session.CurrentEmpresa == null)
+                    return;
+
+                var service = new PendienteService();
+                var datos = service.ObtenerAnalisisPendientes(Session.CurrentEmpresa.IdEmpresa);
+
+                if (datos == null || datos.Count == 0)
+                {
+                    MessageBox.Show(
+                        "No hay documentos con Análisis = True para esta empresa.",
+                        "Pendientes",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    return;
+                }
+
+                var ventana = new SelectorPendientesWindow(datos)
+                {
+                    Owner = Application.Current.Windows
+                        .OfType<Window>()
+                        .FirstOrDefault(w => w.IsActive)
+                };
+
+                if (ventana.ShowDialog() == true)
+                {
+                    foreach (var p in ventana.Resultados)
+                    {
+                        var nuevoItem = new AsientoDetalle
+                        {
+                            // =========================
+                            // IDs
+                            // =========================
+                            IdPlanCuenta = p.IdPlanCuenta,
+                            IdTercero = p.IdTercero,
+
+                            // =========================
+                            // OBJETOS DE NAVEGACIÓN
+                            // =========================
+                            PlanCuenta = new PlanCuenta
+                            {
+                                IdPlanCuenta = p.IdPlanCuenta,
+                                Codigo = p.Cuenta,
+                            },
+
+                            Tercero = new Tercero
+                            {
+                                IdTercero = p.IdTercero ?? 0,
+                                Documento = p.Ruc,
+                                RazonSocial = p.Proveedor,
+                            },
+
+                            // =========================
+                            // DATOS DEL COMPROBANTE
+                            // =========================
+                            SerieComprobante = p.Documento,
+
+                            // =========================
+                            // GLOSA Y MONTOS
+                            // =========================
+                            Glosa = "CANC. DOC " + p.Documento,
+                            Debe = p.Saldo < 0 ? Math.Abs(p.Saldo) : 0m,
+                            Haber = p.Saldo < 0 ? 0m : p.Saldo,
+                        };
+
+                        Detalle.Add(nuevoItem);
+                    }
+
+                    RecalcularTotales();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al abrir pendientes.\n\n" + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+        private void BorrarTodo()
+        {
+            if (Detalle.Count == 0)
+                return;
+
+            var result = MessageBox.Show(
+                "¿Deseas borrar todas las líneas del detalle?",
+                "Confirmar",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Detalle.Clear();
+                _idAsientoActual = null;
+                RecalcularTotales();
+                GenerarReferenciaTemporal();
+            }
+        }
+
         private void AbrirAgregarDetalleAsiento()
         {
             try
@@ -235,6 +387,9 @@ namespace Inmobiliaria_KapiConta.ViewModels
             }
         }
 
+        // ===========================    
+        // METODOS AUXILIARES
+        // ===========================
         private void AgregarLineaDesdeResultado(AsientoDetalle item)
         {
             // si quieres mantener automatización:
@@ -295,12 +450,17 @@ namespace Inmobiliaria_KapiConta.ViewModels
             }
         }
 
+        // Reemplaza el método existente
         private void RecalcularTotales()
         {
             decimal totalDebe = Detalle.Sum(x => x.Debe);
             decimal totalHaber = Detalle.Sum(x => x.Haber);
+            decimal diferencia = totalDebe - totalHaber;
 
-            // luego los bindeas si quieres
+            TotalDebe = totalDebe.ToString("N2", CultureInfo.InvariantCulture);
+            TotalHaber = totalHaber.ToString("N2", CultureInfo.InvariantCulture);
+            Diferencia = diferencia.ToString("N2", CultureInfo.InvariantCulture);
+            FechaEstado = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
         }
 
         private (Asiento asiento, List<AsientoDetalle> detalles)? ConstruirModelo()
@@ -403,8 +563,25 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         private int? _idAsientoActual;
 
+        // ===========================    
+        // METODOS BOTONES DERECHA
+        // ===========================
+        private int _contadorGuardado = 0;
         private void GuardarAsiento()
         {
+            _contadorGuardado++;
+
+            MessageBox.Show(
+                $"Guardar llamado {_contadorGuardado} veces",
+                "DEBUG",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            Debug.WriteLine($"[GuardarAsiento] llamado — StackTrace:");
+            Debug.WriteLine(new System.Diagnostics.StackTrace().ToString());
+            if (_guardando)
+                return;
+
+            _guardando = true;
             try
             {
                 // =========================
@@ -463,44 +640,61 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+            finally
+            {
+                _guardando = false;
+            }
+        }
+        private void AbrirCajaAsiento()
+        {
+            // ✅ elimina la línea del VM que no se usa
+            // var vm = new CajaAsientoViewModel(Detalle);  👈 ELIMINAR
+
+            var ventana = new CajaAsientoWindow(Detalle)
+            {
+                Owner = Application.Current.Windows
+                    .OfType<Window>()
+                    .FirstOrDefault(w => w.IsActive)
+            };
+
+            if (ventana.ShowDialog() == true)
+            {
+                RecalcularTotales();
+            }
         }
 
+        // =========================
+        // LIMPIAR PANTALLA
+        // =========================
+        // Limpiar con flag activado
         private void Limpiar()
         {
-            // =========================
-            // COMBOS (selecciones)
-            // =========================
+            _limpiando = true;            // 🔒 bloquear efectos secundarios
+
+            // COMBOS
             MesSeleccionado = null;
             SubDiarioSeleccionado = null;
             LibroSeleccionado = null;
 
-            // =========================
             // FECHAS
-            // =========================
             Fecha = null;
             FechaVencimiento = null;
 
-            // =========================
             // TEXTOS
-            // =========================
             SubDiarioNombre = string.Empty;
             LibroNombre = string.Empty;
             Referencia = string.Empty;
 
-            // =========================
-            // MONEDA (opcional)
-            // =========================
-            MonedaSeleccionada = "PEN"; // o déjalo como estaba si no quieres resetearlo
+            // MONEDA
+            MonedaSeleccionada = "PEN";
 
-            // =========================
-            // DETALLE (GRID)
-            // =========================
+            // DETALLE
             Detalle.Clear();
 
-            // =========================
             // ESTADO INTERNO
-            // =========================
             _idAsientoActual = null;
+
+            _limpiando = false;           // 🔓 desbloquear efectos secundarios
         }
     }
 }

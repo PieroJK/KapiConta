@@ -446,14 +446,15 @@
 
                         <Button Grid.Column="4" Content="Pendiente" Margin="0,5,5,5"
                             Background="#5569D6" Foreground="White" FontWeight="Bold" FontSize="12"
-                            />
+                             Command="{Binding AbrirPendientesCommand}"/>
 
                         <Button Grid.Column="5" Content="Caja" Margin="0,5,5,5"
-                            Background="#FF6E1F" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                            Background="#FF6E1F" Foreground="White" FontWeight="Bold" FontSize="12"
+                            Command="{Binding AbrirCajaAsientoCommand}"/>
 
                         <Button Grid.Column="6" Content="Borrar" Margin="0,5,8,5"
                             Background="#A2291D" Foreground="White" FontWeight="Bold" FontSize="12"
-                            />
+                            Command="{Binding BorrarTodoCommand}"/>
 
                         <TextBlock Grid.Column="8"
                                Text="Debe"
@@ -470,7 +471,8 @@
                              FontWeight="Bold"
                              IsReadOnly="True"
                              TextAlignment="Right"
-                             Background="#F5F5F5"/>
+                             Background="#F5F5F5"
+                             Text="{Binding TotalDebe, Mode=OneWay}"/>
 
                         <TextBlock Grid.Column="10"
                                Text="Haber"
@@ -487,7 +489,8 @@
                              FontWeight="Bold"
                              IsReadOnly="True"
                              TextAlignment="Right"
-                             Background="#F5F5F5"/>
+                             Background="#F5F5F5"
+                             Text="{Binding TotalHaber, Mode=OneWay}"/>
 
                         <TextBlock Grid.Column="12"
                                Text="Difer."
@@ -506,7 +509,8 @@
                              IsReadOnly="True"
                              TextAlignment="Right"
                              Background="#FFF3C4"
-                             Foreground="Black"/>
+                             Foreground="Black"
+                             Text="{Binding Diferencia, Mode=OneWay}"/>
                     </Grid>
 
                     <!-- ── FOOTER ── -->
@@ -583,7 +587,7 @@
                     </Grid>
 
                     <!-- NUEVO BOTON -->
-                    <Button x:Name="btnAgregarAsiento"
+                    <Button 
         Grid.Row="1"
         Content="Agregar Asiento"
         Background="#149191"
@@ -592,7 +596,7 @@
         FontWeight="Bold"
        />
 
-                    <Button x:Name="btnGuardar"
+                    <Button 
         Grid.Row="2"
         Content="Guardar"
         Background="#2FB35A"
