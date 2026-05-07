@@ -70,35 +70,36 @@
                   CanUserAddRows="False">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Correlativo"    Binding="{Binding numero_correlativo}"                           Width="120"/>
-                <DataGridTextColumn Header="Fecha"          Binding="{Binding fecha_emision, StringFormat=yyyy-MM-dd}"        Width="100"/>
-                <DataGridTextColumn Header="Vencimiento"    Binding="{Binding fecha_ven, StringFormat=yyyy-MM-dd}"            Width="100"/>
-                <DataGridTextColumn Header="T.Doc"          Binding="{Binding tipo_doc}"                                     Width="60"/>
-                <DataGridTextColumn Header="Serie-Número"   Binding="{Binding serie_numero}"                                 Width="140"/>
-                <DataGridTextColumn Header="T.Doc Cliente"  Binding="{Binding tipo_doc_cliente}"                             Width="80"/>
-                <DataGridTextColumn Header="RUC/DNI"        Binding="{Binding nro_documento}"                                Width="120"/>
-                <DataGridTextColumn Header="Razón Social"   Binding="{Binding razon_social}"                                 Width="250"/>
-                <DataGridTextColumn Header="Base Total"     Binding="{Binding base_total, StringFormat=N2}"                  Width="100"/>
-                <DataGridTextColumn Header="Base Imponible" Binding="{Binding base_imponible, StringFormat=N2}"              Width="110"/>
-                <DataGridTextColumn Header="Exonerada"      Binding="{Binding exonerada, StringFormat=N2}"                   Width="100"/>
-                <DataGridTextColumn Header="Inafecta"       Binding="{Binding inafecta, StringFormat=N2}"                    Width="100"/>
-                <DataGridTextColumn Header="V. Imponible"   Binding="{Binding valor_imponible, StringFormat=N2}"             Width="110"/>
-                <DataGridTextColumn Header="Operación"
-                    Binding="{Binding operacion}"
-                    Width="90"/>
+                <DataGridTextColumn Header="Correlativo"     Binding="{Binding numero_correlativo}"                          Width="120"/>
+                <DataGridTextColumn Header="Fecha"           Binding="{Binding fecha_emision, StringFormat=yyyy-MM-dd}"      Width="100"/>
+                <DataGridTextColumn Header="Vencimiento"     Binding="{Binding fecha_ven, StringFormat=yyyy-MM-dd}"          Width="100"/>
+                <DataGridTextColumn Header="T.Doc"           Binding="{Binding tipo_doc}"                                    Width="60"/>
+                <DataGridTextColumn Header="Serie-Número"    Binding="{Binding serie_numero}"                                Width="140"/>
+                <DataGridTextColumn Header="T.Doc Cliente"   Binding="{Binding tipo_doc_cliente}"                           Width="80"/>
+                <DataGridTextColumn Header="RUC/DNI"         Binding="{Binding nro_documento}"                              Width="120"/>
+                <DataGridTextColumn Header="Razón Social"    Binding="{Binding razon_social}"                               Width="250"/>
 
-                <DataGridTextColumn Header="Debe"
-                    Binding="{Binding debe, StringFormat=N2}"
-                    Width="100"/>
-                <DataGridTextColumn Header="IGV"            Binding="{Binding igv, StringFormat=N2}"                         Width="100"/>
-                <DataGridTextColumn Header="ISC"            Binding="{Binding isc, StringFormat=N2}"                         Width="100"/>
-                <DataGridTextColumn Header="Total"          Binding="{Binding importe_total, StringFormat=N2}"               Width="110"/>
-                <DataGridTextColumn Header="Glosa"          Binding="{Binding glosa}"                                        Width="250"/>
-                <DataGridTextColumn Header="Moneda"         Binding="{Binding moneda}"                                       Width="60"/>
-                <DataGridTextColumn Header="T.Cambio"       Binding="{Binding tipo_cambio}"                                  Width="80"/>
-                <DataGridTextColumn Header="Usuario"        Binding="{Binding usuario}"                                      Width="80"/>
-                <DataGridTextColumn Header="Modificación"   Binding="{Binding fecha_modificacion, StringFormat=yyyy-MM-dd HH:mm}" Width="140"/>
-                <DataGridTextColumn Header="Cte. Modificado" Binding="{Binding comprobante_modificado}"                      Width="130"/>
+                <!-- ✅ COLUMNAS POR OPERACIÓN -->
+                <DataGridTextColumn Header="GRA1"            Binding="{Binding gra1, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="IGV1"            Binding="{Binding igv1, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="GRA2"            Binding="{Binding gra2, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="IGV2"            Binding="{Binding igv2, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="GRA3"            Binding="{Binding gra3, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="IGV3"            Binding="{Binding igv3, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="GRA4"            Binding="{Binding gra4, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="IGV4"            Binding="{Binding igv4, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="GRA5"            Binding="{Binding gra5, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="IGV5"            Binding="{Binding igv5, StringFormat=N2}"                      Width="100"/>
+                <DataGridTextColumn Header="Exonerada"       Binding="{Binding exonerada, StringFormat=N2}"                 Width="100"/>
+                <DataGridTextColumn Header="Inafecta"        Binding="{Binding inafecta, StringFormat=N2}"                  Width="100"/>
+                <DataGridTextColumn Header="IGV Total"       Binding="{Binding igv_total, StringFormat=N2}"                 Width="100"/>
+                <DataGridTextColumn Header="Total"           Binding="{Binding importe_total, StringFormat=N2}"             Width="110"/>
+                <DataGridTextColumn Header="Glosa"           Binding="{Binding glosa}"                                      Width="250"/>
+                <DataGridTextColumn Header="Moneda"          Binding="{Binding moneda}"                                     Width="60"/>
+                <DataGridTextColumn Header="T.Cambio"        Binding="{Binding tipo_cambio}"                                Width="80"/>
+                <DataGridTextColumn Header="Usuario"         Binding="{Binding usuario}"                                    Width="80"/>
+                <DataGridTextColumn Header="Modificación"    Binding="{Binding fecha_modificacion, StringFormat=yyyy-MM-dd HH:mm}" Width="140"/>
+                <DataGridTextColumn Header="Cte. Modificado" Binding="{Binding comprobante_modificado}"                     Width="130"/>
             </DataGrid.Columns>
         </DataGrid>
 

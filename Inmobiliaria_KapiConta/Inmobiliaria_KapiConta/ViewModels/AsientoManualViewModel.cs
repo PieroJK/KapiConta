@@ -56,6 +56,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public ICommand RevertirDetalleCommand { get; set; }
 
         public ICommand AplicarDiferenciaCommand { get; set; }
+        public ICommand QuitarDetalleCommand { get; set; }
 
         // =========================
         // SELECCIONES
@@ -198,6 +199,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
             BorrarTodoCommand = new RelayCommand(BorrarTodo);
             AbrirCajaAsientoCommand = new RelayCommand(AbrirCajaAsiento);
             AbrirPendientesCommand = new RelayCommand(AbrirPendientes);
+            QuitarDetalleCommand = new RelayCommand(QuitarDetalle);
 
             _mesService = new MesService();
             _subDiarioService = new SubDiarioService();
@@ -265,8 +267,20 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // ===========================    
         // METODOS BOTONES INFERIORES
         // ===========================
+        private void QuitarDetalle()
+        {
+            if (DetalleSeleccionado == null)
+            {
+                MessageBox.Show("Selecciona una fila para quitar.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-        // El método migrado — en la sección METODOS BOTONES INFERIORES
+            Detalle.Remove(DetalleSeleccionado);
+            DetalleSeleccionado = null;
+
+            RecalcularTotales();
+        }
         private void AplicarDiferencia()
         {
             decimal totalDebe = Detalle.Sum(x => x.Debe);

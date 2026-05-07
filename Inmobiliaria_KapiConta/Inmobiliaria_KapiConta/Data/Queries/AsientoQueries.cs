@@ -153,51 +153,171 @@
     a.referencia                                                        AS numero_correlativo,
     a.fecha                                                             AS fecha_emision,
     a.fecha_ven,
-
-    -- Tipo doc y comprobante: tomar del detalle que tenga facturación
     MAX(tf.cod)                                                         AS tipo_doc,
     MAX(ad.serie_comprobante)                                           AS serie_numero,
-
-    -- Tercero: tomar del detalle que tenga tercero
     MAX(ttd.cod)                                                        AS tipo_doc_cliente,
     MAX(t.documento)                                                    AS nro_documento,
     MAX(t.razon_social)                                                 AS razon_social,
 
-    -- Montos: lógica contable
-    SUM(CASE WHEN pc.codigo NOT LIKE '40%' AND ad.debe > 0 
-             THEN ad.debe ELSE 0 END)                                   AS debe,
+    -- ✅ COLUMNAS POR OPERACIÓN (pivoteo manual)
+    SUM(CASE WHEN toa.codigo = 'GRA1' AND pc.codigo NOT LIKE '40%' 
+             THEN ad.debe ELSE 0 END)                                   AS gra1,
 
-    SUM(CASE WHEN pc.codigo NOT LIKE '40%' 
-             THEN ad.debe ELSE 0 END)                                   AS base_total,
+    SUM(
+    CASE 
+        WHEN toa.codigo = 'IGV1'
+         AND pc.codigo LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS igv1,
 
-    CASE WHEN MAX(toa.codigo) = 'GRA1' 
-         THEN SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) 
-         ELSE 0 END                                                     AS base_imponible,
+   SUM(
+    CASE 
+        WHEN toa.codigo = 'GRA2'
+         AND pc.codigo NOT LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS gra2,
 
-    CASE WHEN MAX(toa.codigo) = 'EXO'  
-         THEN SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) 
-         ELSE 0 END                                                     AS exonerada,
+SUM(
+    CASE 
+        WHEN toa.codigo = 'IGV2'
+         AND pc.codigo LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS igv2,
 
-    CASE WHEN MAX(toa.codigo) = 'INA'  
-         THEN SUM(CASE WHEN pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) 
-         ELSE 0 END                                                     AS inafecta,
+SUM(
+    CASE 
+        WHEN toa.codigo = 'GRA3'
+         AND pc.codigo NOT LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS gra3,
 
-    SUM(CASE WHEN toa.codigo = 'VIM'   
-             THEN ad.debe ELSE 0 END)                                   AS valor_imponible,
+SUM(
+    CASE 
+        WHEN toa.codigo = 'IGV3'
+         AND pc.codigo LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS igv3,
+
+SUM(
+    CASE 
+        WHEN toa.codigo = 'GRA4'
+         AND pc.codigo NOT LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS gra4,
+
+SUM(
+    CASE 
+        WHEN toa.codigo = 'IGV4'
+         AND pc.codigo LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS igv4,
+
+SUM(
+    CASE 
+        WHEN toa.codigo = 'GRA5'
+         AND pc.codigo NOT LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS gra5,
+
+SUM(
+    CASE 
+        WHEN toa.codigo = 'IGV5'
+         AND pc.codigo LIKE '40%' 
+        THEN 
+            CASE
+                WHEN a.id_sub_diario = 1
+                    THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END
+) AS igv5,
+
+    SUM(CASE 
+        WHEN toa.codigo = 'EXO'
+         AND pc.codigo NOT LIKE '40%'
+        THEN 
+            CASE 
+                WHEN a.id_sub_diario = 1 THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END) AS exonerada,
+
+    SUM(CASE 
+        WHEN toa.codigo = 'INA'
+         AND pc.codigo NOT LIKE '40%'
+        THEN 
+            CASE 
+                WHEN a.id_sub_diario = 1 THEN ad.haber
+                ELSE ad.debe
+            END
+        ELSE 0
+    END) AS inafecta,
 
     SUM(CASE WHEN pc.codigo LIKE '40%' 
-             THEN ad.debe ELSE 0 END)                                   AS igv,
-
-    SUM(CASE WHEN pc.codigo LIKE '403%' 
-             THEN ad.debe ELSE 0 END)                                   AS isc,
+             THEN ad.debe ELSE 0 END)                                   AS igv_total,
 
     SUM(ad.debe)                                                        AS importe_total,
 
-    -- Glosa: tomar la del primer detalle con comprobante, o cualquiera
     MAX(CASE WHEN ad.serie_comprobante IS NOT NULL 
              THEN ad.glosa ELSE NULL END)                               AS glosa,
-
-    STRING_AGG(DISTINCT toa.codigo, ', ')                               AS operacion,
 
     a.moneda,
     CASE WHEN a.moneda = 'PEN' THEN 1 ELSE MAX(tc.venta) END           AS tipo_cambio,
@@ -206,23 +326,22 @@
     MAX(a_rel.referencia)                                               AS comprobante_modificado
 
 FROM asiento_detalle ad
-INNER JOIN asiento              a    ON a.id_asiento            = ad.id_asiento
-INNER JOIN plan_cuenta          pc   ON pc.id_plan_cuenta       = ad.id_plan_cuenta
-LEFT  JOIN tipo_operacion_asiento toa ON toa.id_tipo_operacion  = ad.id_tipo_operacion
-LEFT  JOIN tipo_facturacion     tf   ON tf.id_tipo_facturacion  = ad.id_tipo_facturacion
-LEFT  JOIN tercero              t    ON t.id_tercero            = ad.id_tercero
-LEFT  JOIN tercero_tipo_documento ttd ON ttd.id_tercero_tipo_documento = t.id_tercero_tipo_documento
-LEFT  JOIN relacion_asiento     ar   ON ar.id_relacion          = ad.id_relacion
-LEFT  JOIN asiento              a_rel ON a_rel.id_asiento       = ar.asiento_relacionado
-LEFT  JOIN tipo_cambio          tc   ON tc.id_tipo_cambio       = a.id_tipo_cambio
-LEFT  JOIN usuario              u    ON u.id_usuario            = a.id_usuario
+INNER JOIN asiento               a    ON a.id_asiento            = ad.id_asiento
+INNER JOIN plan_cuenta           pc   ON pc.id_plan_cuenta       = ad.id_plan_cuenta
+LEFT  JOIN tipo_operacion_asiento toa  ON toa.id_tipo_operacion  = ad.id_tipo_operacion
+LEFT  JOIN tipo_facturacion      tf   ON tf.id_tipo_facturacion  = ad.id_tipo_facturacion
+LEFT  JOIN tercero               t    ON t.id_tercero            = ad.id_tercero
+LEFT  JOIN tercero_tipo_documento ttd  ON ttd.id_tercero_tipo_documento = t.id_tercero_tipo_documento
+LEFT  JOIN relacion_asiento      ar   ON ar.id_relacion          = ad.id_relacion
+LEFT  JOIN asiento               a_rel ON a_rel.id_asiento       = ar.asiento_relacionado
+LEFT  JOIN tipo_cambio           tc   ON tc.id_tipo_cambio       = a.id_tipo_cambio
+LEFT  JOIN usuario               u    ON u.id_usuario            = a.id_usuario
 
 WHERE a.id_empresa    = @idEmpresa
   AND a.estado        = true
   AND a.id_mes        = @idMes
   AND a.id_sub_diario = @idSubDiario
 
--- ✅ CLAVE: agrupar SOLO por campos de cabecera
 GROUP BY
     a.id_asiento,
     a.referencia,

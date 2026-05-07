@@ -435,7 +435,7 @@
 
                         <Button Grid.Column="1" Content="Quitar" Margin="0,5,5,5"
                             Background="#D2452D" Foreground="White" FontWeight="Bold" FontSize="12"
-                            />
+                            Command="{Binding QuitarDetalleCommand}"/>
 
                         <Button Grid.Column="2" Content="Dif. de&#10;Cambio" Margin="0,5,5,5"
                             Background="#31B66F" Foreground="White" FontWeight="Bold" FontSize="11"
