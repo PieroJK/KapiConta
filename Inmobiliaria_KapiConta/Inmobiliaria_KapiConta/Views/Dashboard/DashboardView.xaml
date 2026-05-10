@@ -94,13 +94,15 @@
                      Command="{Binding  ListadoAsientoCommand}"/>
                     <MenuItem Header="Consultar Cuentas" Style="{StaticResource SubMenuItemStyle}"
                      Command="{Binding  ConsultasCuentaCommand}"/>
+                    <MenuItem Header="Consultar Balance" Style="{StaticResource SubMenuItemStyle}"
+                    Command="{Binding   ConsultasBalanceCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Utilidades"></MenuItem>
                 
 
             </Menu>
 
-            <!-- CONTENIDO -->
+            <!-- CONTENIDO ConsultasCuentaCommand-->
             <TabControl Grid.Row="1"
             Background="Transparent"
             BorderThickness="0"

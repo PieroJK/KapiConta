@@ -63,6 +63,8 @@ namespace Inmobiliaria_KapiConta.ViewModels
 
         public ICommand ConsultasCuentaCommand { get; }
 
+        public ICommand ConsultasBalanceCommand { get; }
+
         private object _contenidoActual;
         public object ContenidoActual
         {
@@ -401,7 +403,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     Debug.WriteLine(ex.StackTrace);
                 }
             });
-            //////
+            //////ConsultasBalanceCommand
             ConsultasCuentaCommand = new RelayCommand(() =>
             {
                 try
@@ -434,6 +436,40 @@ namespace Inmobiliaria_KapiConta.ViewModels
                     Debug.WriteLine(ex.StackTrace);
                 }
             });
+
+            ConsultasBalanceCommand = new RelayCommand(() =>
+            {
+                try
+                {
+                    if (Session.CurrentEmpresa == null) return;
+
+                    var existente = Tabs.FirstOrDefault(t => t.Titulo == "Consultar Balance");
+
+                    if (existente != null)
+                    {
+                        TabSeleccionado = existente;
+                        return;
+                    }
+
+                    var vm = new ConsultaBalanceViewModel(); // 🔥 aquí probablemente rompe
+
+                    var nuevaTab = new TabItemViewModel
+                    {
+                        Titulo = "Consultar Balance",
+                        Contenido = vm
+                    };
+
+                    Tabs.Add(nuevaTab);
+                    TabSeleccionado = nuevaTab;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] {DateTime.Now}");
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
+                }
+            });
+
 
         }
 
