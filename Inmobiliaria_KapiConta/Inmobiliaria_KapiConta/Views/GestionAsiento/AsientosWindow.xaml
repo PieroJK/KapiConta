@@ -614,7 +614,8 @@
         Foreground="White"
         FontSize="14"
         FontWeight="Bold"
-        />
+        Command="{Binding ModificarCommand}"
+        IsEnabled="{Binding ModoBuscar}"/>
 
                     <Button x:Name="btnEliminar"
         Grid.Row="4"
@@ -623,7 +624,8 @@
         Foreground="White"
         FontSize="14"
         FontWeight="Bold"
-        />
+        Command="{Binding EliminarCommand}"
+        IsEnabled="{Binding ModoBuscar}"/>
 
                     <Button x:Name="btnRevertirAsiento"
         Grid.Row="5"
@@ -632,7 +634,8 @@
         Foreground="White"
         FontSize="14"
         FontWeight="Bold"
-        />
+        Command="{Binding RevertirAsientoCommand}"
+        IsEnabled="{Binding ModoBuscar}"/>
 
                     <Button x:Name="btnCopiar"
         Grid.Row="6"
@@ -641,7 +644,8 @@
         Foreground="White"
         FontSize="14"
         FontWeight="Bold"
-        />
+        IsEnabled="{Binding ModoBuscar}"
+        Command="{Binding CopiarAsientoCommand}"/>
 
                     <Button x:Name="btnVolver"
         Grid.Row="7"
@@ -659,7 +663,7 @@
         Foreground="White"
         FontSize="14"
         FontWeight="Bold"
-        />
+        Command="{Binding BuscarAsientoCommand}"/>
                 </Grid>
 
             </Grid>

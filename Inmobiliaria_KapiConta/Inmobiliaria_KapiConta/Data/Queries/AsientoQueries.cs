@@ -163,132 +163,9 @@
     SUM(CASE WHEN toa.codigo = 'GRA1' AND pc.codigo NOT LIKE '40%' 
              THEN ad.debe ELSE 0 END)                                   AS gra1,
 
-    SUM(
-    CASE 
-        WHEN toa.codigo = 'IGV1'
-         AND pc.codigo LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS igv1,
+    SUM(CASE WHEN toa.codigo = 'IGV1' AND pc.codigo LIKE '40%' THEN ad.debe ELSE 0 END) AS igv1,
 
-   SUM(
-    CASE 
-        WHEN toa.codigo = 'GRA2'
-         AND pc.codigo NOT LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS gra2,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'IGV2'
-         AND pc.codigo LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS igv2,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'GRA3'
-         AND pc.codigo NOT LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS gra3,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'IGV3'
-         AND pc.codigo LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS igv3,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'GRA4'
-         AND pc.codigo NOT LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS gra4,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'IGV4'
-         AND pc.codigo LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS igv4,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'GRA5'
-         AND pc.codigo NOT LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS gra5,
-
-SUM(
-    CASE 
-        WHEN toa.codigo = 'IGV5'
-         AND pc.codigo LIKE '40%' 
-        THEN 
-            CASE
-                WHEN a.id_sub_diario = 1
-                    THEN ad.haber
-                ELSE ad.debe
-            END
-        ELSE 0
-    END
-) AS igv5,
-
+   SUM(CASE WHEN toa.codigo = 'GRA2' AND pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) AS gra2, SUM(CASE WHEN toa.codigo = 'IGV2' AND pc.codigo LIKE '40%' THEN ad.debe ELSE 0 END) AS igv2, SUM(CASE WHEN toa.codigo = 'GRA3' AND pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) AS gra3, SUM(CASE WHEN toa.codigo = 'IGV3' AND pc.codigo LIKE '40%' THEN ad.debe ELSE 0 END) AS igv3, SUM(CASE WHEN toa.codigo = 'GRA4' AND pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) AS gra4, SUM(CASE WHEN toa.codigo = 'IGV4' AND pc.codigo LIKE '40%' THEN ad.debe ELSE 0 END) AS igv4, SUM(CASE WHEN toa.codigo = 'GRA5' AND pc.codigo NOT LIKE '40%' THEN ad.debe ELSE 0 END) AS gra5, SUM(CASE WHEN toa.codigo = 'IGV5' AND pc.codigo LIKE '40%' THEN ad.debe ELSE 0 END) AS igv5,
     SUM(CASE 
         WHEN toa.codigo = 'EXO'
          AND pc.codigo NOT LIKE '40%'
@@ -375,5 +252,73 @@ ORDER BY
         true
     )
     RETURNING id_relacion;";
+
+        public static string BuscarAsientos = @"
+SELECT
+    a.id_asiento,
+    a.referencia,
+    m.mes AS mes_codigo,
+    sd.diario AS subdiario_codigo,
+    TO_CHAR(a.fecha, 'DD/MM/YYYY') AS fecha_texto,
+
+    COALESCE((
+        SELECT ad.glosa
+        FROM asiento_detalle ad
+        WHERE ad.id_asiento = a.id_asiento
+        ORDER BY ad.id_asiento_detalle
+        LIMIT 1
+    ), '') AS glosa,
+
+    COALESCE((
+        SELECT 
+            CASE 
+                WHEN ad2.debe > 0 THEN ad2.debe
+                ELSE -ad2.haber
+            END
+        FROM asiento_detalle ad2
+        WHERE ad2.id_asiento = a.id_asiento
+        ORDER BY ad2.id_asiento_detalle
+        LIMIT 1
+    ), 0) AS importe,
+
+    COALESCE(u.usuario, '') AS usuario
+
+FROM asiento a
+INNER JOIN mes m 
+    ON m.id_mes = a.id_mes
+
+INNER JOIN sub_diario sd 
+    ON sd.id_sub_diario = a.id_sub_diario
+
+LEFT JOIN usuario u 
+    ON u.id_usuario = a.id_usuario
+
+WHERE a.id_empresa = @idEmpresa
+  AND a.estado = true
+
+  AND (
+        @idMes IS NULL
+        OR a.id_mes = @idMes
+      )
+
+  AND (
+        @idSubDiario IS NULL
+        OR a.id_sub_diario = @idSubDiario
+      )
+
+  AND (
+      @texto = ''
+      OR a.referencia ILIKE @textoLike
+      OR EXISTS (
+          SELECT 1
+          FROM asiento_detalle ad2
+          WHERE ad2.id_asiento = a.id_asiento
+            AND ad2.glosa ILIKE @textoLike
+      )
+  )
+
+ORDER BY a.fecha DESC, a.id_asiento DESC;";
+
+
     }
 }

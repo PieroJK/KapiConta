@@ -543,67 +543,68 @@ namespace Inmobiliaria_KapiConta.Services
                     referencia, fila.Fecha, fila.FechaVcmto,
                     fila.Moneda, idTipoCambio);
 
-                // ✅ TOTAL → DEBE (cuenta clientes)
-                if (fila.Total != 0 && EsCuentaValida(fila.CtaTotal))
-                    InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaTotal],
-                        fila.Total, 0, fila.Moneda, fila.Glosa,
-                        idTipoFacturacion, serieDoc, idTercero, null, idCosto, null);
-
-                // ✅ EXONERADO → HABER
+                // ✅ EXONERADO → DEBE (igual que compras)
                 if (fila.Exonerado != 0 && EsCuentaValida(fila.CtaExonerada))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaExonerada],
-                        0, fila.Exonerado, fila.Moneda, fila.Glosa,
+                        fila.Exonerado, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("EXO", cat));
 
-                // ✅ INAFECTO → HABER
+                // ✅ INAFECTO → DEBE (igual que compras)
                 if (fila.Inafecto != 0 && EsCuentaValida(fila.CtaInafecta))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaInafecta],
-                        0, fila.Inafecto, fila.Moneda, fila.Glosa,
+                        fila.Inafecto, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("INA", cat));
 
-                // ✅ IMPONIBLE 1 → HABER
+                // ✅ IMPONIBLE 1 → DEBE (igual que compras)
                 if (fila.Imponible1 != 0 && EsCuentaValida(fila.CtaImponible1))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaImponible1],
-                        0, fila.Imponible1, fila.Moneda, fila.Glosa,
+                        fila.Imponible1, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("GRA1", cat));
 
-                // ✅ IMPONIBLE 2 → HABER
+                // ✅ IMPONIBLE 2 → DEBE
                 if (fila.Imponible2 != 0 && EsCuentaValida(fila.CtaImponible2))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaImponible2],
-                        0, fila.Imponible2, fila.Moneda, fila.Glosa,
+                        fila.Imponible2, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("GRA2", cat));
 
-                // ✅ IMPONIBLE 3 → HABER
+                // ✅ IMPONIBLE 3 → DEBE
                 if (fila.Imponible3 != 0 && EsCuentaValida(fila.CtaImponible3))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaImponible3],
-                        0, fila.Imponible3, fila.Moneda, fila.Glosa,
+                        fila.Imponible3, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("GRA3", cat));
 
-                // ✅ IMPONIBLE 4 → HABER
+                // ✅ IMPONIBLE 4 → DEBE
                 if (fila.Imponible4 != 0 && EsCuentaValida(fila.CtaImponible4))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaImponible4],
-                        0, fila.Imponible4, fila.Moneda, fila.Glosa,
+                        fila.Imponible4, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("GRA4", cat));
 
-                // ✅ IMPONIBLE 5 → HABER
+                // ✅ IMPONIBLE 5 → DEBE
                 if (fila.Imponible5 != 0 && EsCuentaValida(fila.CtaImponible5))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaImponible5],
-                        0, fila.Imponible5, fila.Moneda, fila.Glosa,
+                        fila.Imponible5, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("GRA5", cat));
 
-                // ✅ IGV → HABER
+                // ✅ IGV → DEBE (igual que compras)
                 if (fila.Igv != 0 && EsCuentaValida(fila.CtaIgv))
                     InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaIgv],
-                        0, fila.Igv, fila.Moneda, fila.Glosa,
+                        fila.Igv, 0, fila.Moneda, fila.Glosa,
                         idTipoFacturacion, serieDoc, idTercero, null, idCosto,
                         ResolverTipoOperacion("IGV1", cat));
+
+                // ✅ TOTAL → HABER (cuenta clientes — igual que compras va al HABER)
+                if (fila.Total != 0 && EsCuentaValida(fila.CtaTotal))
+                    InsertarDetalle(cn, tx, idAsiento, cat.Cuentas[fila.CtaTotal],
+                        0, fila.Total, fila.Moneda, fila.Glosa,
+                        idTipoFacturacion, serieDoc, idTercero, null, idCosto,
+                        null);
 
                 tx.Commit();
             }

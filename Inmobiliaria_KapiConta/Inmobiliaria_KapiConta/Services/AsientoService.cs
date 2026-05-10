@@ -1,6 +1,7 @@
 ﻿using Inmobiliaria_KapiConta.Data;
 using Inmobiliaria_KapiConta.Data.Queries;
 using Inmobiliaria_KapiConta.Models;
+using Inmobiliaria_KapiConta.Models.DTOs;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -264,6 +265,314 @@ namespace Inmobiliaria_KapiConta.Services
             cmd.Parameters.AddWithValue("@idCosto",
                 (object?)item.IdCosto ?? DBNull.Value);
 
+            cmd.ExecuteNonQuery();
+        }
+
+        public List<AsientoBusquedaRegistroItem> BuscarAsientos(
+    int idEmpresa,
+    int? idMes,
+    int? idSubDiario,
+    string texto)
+        {
+            using var cn = DbConnectionFactory.Create();
+            cn.Open();
+
+            var lista = new List<AsientoBusquedaRegistroItem>();
+
+            using var cmd = new NpgsqlCommand(AsientoQueries.BuscarAsientos, cn);
+
+            cmd.Parameters.AddWithValue("@idEmpresa", idEmpresa);
+
+            // ✅ tipado explícito para nullable integers
+            var pMes = cmd.Parameters.Add("@idMes", NpgsqlTypes.NpgsqlDbType.Integer);
+            pMes.Value = idMes.HasValue ? idMes.Value : DBNull.Value;
+
+            var pSub = cmd.Parameters.Add("@idSubDiario", NpgsqlTypes.NpgsqlDbType.Integer);
+            pSub.Value = idSubDiario.HasValue ? idSubDiario.Value : DBNull.Value;
+
+            texto = texto?.Trim() ?? string.Empty;
+            cmd.Parameters.AddWithValue("@texto", texto);
+            cmd.Parameters.AddWithValue("@textoLike", $"%{texto}%");
+
+            using var dr = cmd.ExecuteReader();
+
+            while (dr.Read())
+            {
+                lista.Add(Data.Mappings.AsientoBusquedaRegistroItemMapper.Map(dr));
+            }
+
+            return lista;
+        }
+
+        // Agrega esto en AsientoService.cs
+
+        public AsientoCargadoItem? ObtenerAsientoPorId(int idAsiento)
+        {
+            using var cn = DbConnectionFactory.Create();
+            cn.Open();
+
+            var cabecera = ObtenerCabeceraPorId(cn, idAsiento);
+            if (cabecera == null)
+                return null;
+
+            cabecera.Detalles = ObtenerDetallesPorAsiento(cn, idAsiento);
+            cabecera.Relaciones = ObtenerRelacionesPorAsiento(cn, idAsiento);
+
+            return cabecera;
+        }
+
+        // =========================
+        // PRIVADOS DE CARGA
+        // =========================
+
+        private AsientoCargadoItem? ObtenerCabeceraPorId(NpgsqlConnection cn, int idAsiento)
+        {
+            string sql = @"
+        SELECT id_asiento, id_mes, id_sub_diario, id_libro,
+               referencia, fecha, moneda, id_tipo_cambio, fecha_ven
+        FROM asiento
+        WHERE id_asiento = @idAsiento
+          AND estado = true;";
+
+            using var cmd = new NpgsqlCommand(sql, cn);
+            cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
+
+            using var dr = cmd.ExecuteReader();
+            if (!dr.Read())
+                return null;
+
+            return new AsientoCargadoItem
+            {
+                IdAsiento = Convert.ToInt32(dr["id_asiento"]),
+                IdMes = Convert.ToInt32(dr["id_mes"]),
+                IdSubDiario = Convert.ToInt32(dr["id_sub_diario"]),
+                IdLibro = Convert.ToInt32(dr["id_libro"]),
+                Referencia = dr["referencia"]?.ToString() ?? "",
+                Fecha = LeerFecha(dr["fecha"]),
+                Moneda = dr["moneda"]?.ToString() ?? "PEN",
+                IdTipoCambio = dr["id_tipo_cambio"] == DBNull.Value ? null : Convert.ToInt32(dr["id_tipo_cambio"]),
+                FechaVencimiento = dr["fecha_ven"] == DBNull.Value ? null : LeerFecha(dr["fecha_ven"])
+            };
+        }
+
+        private DateTime LeerFecha(object valor)
+        {
+            if (valor is DateTime dt) return dt;
+            if (valor is DateOnly dateOnly) return dateOnly.ToDateTime(TimeOnly.MinValue);
+            return Convert.ToDateTime(valor);
+        }
+
+        private List<AsientoDetalleCargadoItem> ObtenerDetallesPorAsiento(NpgsqlConnection cn, int idAsiento)
+        {
+            var lista = new List<AsientoDetalleCargadoItem>();
+
+            string sql = @"
+        SELECT
+            ad.id_plan_cuenta,
+            pc.codigo,
+            pc.descripcion,
+            ad.moneda,
+            ad.debe,
+            ad.haber,
+            tf.id_tipo_facturacion,
+            COALESCE(tf.cod, '')          AS tipo_doc_codigo,
+            COALESCE(ad.serie_comprobante, '') AS documento,
+            t.id_tercero,
+            COALESCE(t.documento, '')     AS ruc,
+            COALESCE(t.razon_social, '')  AS razon_social,
+            ad.glosa,
+            topa.id_tipo_operacion,
+            COALESCE(topa.nombre, '')     AS tipo_operacion_nombre,
+            COALESCE(aRef.referencia, '') AS asiento_referencia
+        FROM asiento_detalle ad
+        INNER JOIN plan_cuenta           pc   ON pc.id_plan_cuenta      = ad.id_plan_cuenta
+        LEFT  JOIN tipo_facturacion      tf   ON tf.id_tipo_facturacion = ad.id_tipo_facturacion
+        LEFT  JOIN tercero               t    ON t.id_tercero           = ad.id_tercero
+        LEFT  JOIN tipo_operacion_asiento topa ON topa.id_tipo_operacion = ad.id_tipo_operacion
+        LEFT  JOIN relacion_asiento      ra   ON ra.id_relacion         = ad.id_relacion
+        LEFT  JOIN asiento               aRef ON aRef.id_asiento        = ra.asiento_relacionado
+        WHERE ad.id_asiento = @idAsiento
+        ORDER BY ad.id_asiento_detalle;";
+
+            using var cmd = new NpgsqlCommand(sql, cn);
+            cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
+
+            using var dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                lista.Add(new AsientoDetalleCargadoItem
+                {
+                    IdPlanCuenta = Convert.ToInt32(dr["id_plan_cuenta"]),
+                    CuentaCodigo = dr["codigo"]?.ToString() ?? "",
+                    CuentaNombre = dr["descripcion"]?.ToString() ?? "",
+                    Moneda = dr["moneda"]?.ToString() ?? "PEN",
+                    Debe = Convert.ToDecimal(dr["debe"]),
+                    Haber = Convert.ToDecimal(dr["haber"]),
+                    IdTipoDocumento = dr["id_tipo_facturacion"] == DBNull.Value ? null : Convert.ToInt32(dr["id_tipo_facturacion"]),
+                    TipoDocumentoCodigo = dr["tipo_doc_codigo"]?.ToString() ?? "",
+                    Documento = dr["documento"]?.ToString() ?? "",
+                    IdTercero = dr["id_tercero"] == DBNull.Value ? null : Convert.ToInt32(dr["id_tercero"]),
+                    Ruc = dr["ruc"]?.ToString() ?? "",
+                    RazonSocial = dr["razon_social"]?.ToString() ?? "",
+                    Glosa = dr["glosa"]?.ToString() ?? "",
+                    IdTipoOperacion = dr["id_tipo_operacion"] == DBNull.Value ? null : Convert.ToInt32(dr["id_tipo_operacion"]),
+                    TipoOperacionNombre = dr["tipo_operacion_nombre"]?.ToString() ?? "",
+                    AsientoReferencia = dr["asiento_referencia"]?.ToString() ?? ""
+                });
+            }
+
+            return lista;
+        }
+
+        private List<AsientoRelacionItem> ObtenerRelacionesPorAsiento(NpgsqlConnection cn, int idAsiento)
+        {
+            var lista = new List<AsientoRelacionItem>();
+
+            string sql = @"
+        SELECT DISTINCT
+            COALESCE(aRef.referencia, '')       AS asiento_referencia,
+            COALESCE(tf.cod, '')                AS tipo_doc_codigo,
+            COALESCE(ad.serie_comprobante, '')  AS documento,
+            COALESCE(t.documento, '')           AS ruc,
+            COALESCE(t.razon_social, '')        AS razon_social
+        FROM asiento_detalle ad
+        LEFT JOIN tipo_facturacion  tf   ON tf.id_tipo_facturacion = ad.id_tipo_facturacion
+        LEFT JOIN tercero           t    ON t.id_tercero           = ad.id_tercero
+        LEFT JOIN relacion_asiento  ra   ON ra.id_relacion         = ad.id_relacion
+        LEFT JOIN asiento           aRef ON aRef.id_asiento        = ra.asiento_relacionado
+        WHERE ad.id_asiento = @idAsiento
+          AND COALESCE(aRef.referencia, '') <> '';";
+
+            using var cmd = new NpgsqlCommand(sql, cn);
+            cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
+
+            using var dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                lista.Add(new AsientoRelacionItem
+                {
+                    AsientoReferencia = dr["asiento_referencia"]?.ToString() ?? "",
+                    TipoDocumentoCodigo = dr["tipo_doc_codigo"]?.ToString() ?? "",
+                    Documento = dr["documento"]?.ToString() ?? "",
+                    Ruc = dr["ruc"]?.ToString() ?? "",
+                    RazonSocial = dr["razon_social"]?.ToString() ?? ""
+                });
+            }
+
+            return lista;
+        }
+
+        public void ModificarAsiento(int idAsiento, Asiento cabecera, List<AsientoDetalle> detalles)
+        {
+            using var cn = DbConnectionFactory.Create();
+            cn.Open();
+
+            using var tx = cn.BeginTransaction();
+
+            try
+            {
+                // 1. Actualizar cabecera
+                ActualizarCabecera(cn, tx, idAsiento, cabecera);
+
+                // 2. Eliminar detalle y relaciones anteriores
+                EliminarDetallesDelAsiento(cn, tx, idAsiento);
+                EliminarRelacionesDelAsiento(cn, tx, idAsiento);
+
+                // 3. Re-insertar detalles
+                foreach (var item in detalles)
+                {
+                    InsertarDetalle(cn, tx, idAsiento, item, null);
+                }
+
+                tx.Commit();
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
+        }
+
+        public void EliminarAsiento(int idAsiento)
+        {
+            using var cn = DbConnectionFactory.Create();
+            cn.Open();
+
+            using var tx = cn.BeginTransaction();
+
+            try
+            {
+                string sql = @"
+            UPDATE asiento
+            SET estado = false,
+                fecha_modificacion = CURRENT_TIMESTAMP
+            WHERE id_asiento = @idAsiento;";
+
+                using var cmd = new NpgsqlCommand(sql, cn, tx);
+                cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
+                cmd.ExecuteNonQuery();
+
+                tx.Commit();
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
+        }
+
+        // =========================
+        // PRIVADOS DE MODIFICACIÓN
+        // =========================
+
+        private void ActualizarCabecera(
+            NpgsqlConnection cn,
+            NpgsqlTransaction tx,
+            int idAsiento,
+            Asiento cabecera)
+        {
+            string sql = @"
+        UPDATE asiento
+        SET id_mes          = @idMes,
+            id_sub_diario   = @idSubDiario,
+            id_libro        = @idLibro,
+            referencia      = @referencia,
+            fecha           = @fecha,
+            moneda          = @moneda,
+            id_tipo_cambio  = @idTipoCambio,
+            fecha_ven       = @fechaVen,
+            id_usuario      = @idUsuario,
+            fecha_modificacion = CURRENT_TIMESTAMP
+        WHERE id_asiento = @idAsiento;";
+
+            using var cmd = new NpgsqlCommand(sql, cn, tx);
+            cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
+            cmd.Parameters.AddWithValue("@idMes", cabecera.IdMes);
+            cmd.Parameters.AddWithValue("@idSubDiario", cabecera.IdSubDiario);
+            cmd.Parameters.AddWithValue("@idLibro", cabecera.IdLibro);
+            cmd.Parameters.AddWithValue("@referencia", (object?)cabecera.Referencia ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@fecha", cabecera.Fecha.Date);
+            cmd.Parameters.AddWithValue("@moneda", cabecera.Moneda);
+            cmd.Parameters.AddWithValue("@idTipoCambio", (object?)cabecera.IdTipoCambio ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@fechaVen", (object?)cabecera.FechaVen ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@idUsuario", (object?)cabecera.IdUsuario ?? DBNull.Value);
+
+            cmd.ExecuteNonQuery();
+        }
+
+        private void EliminarDetallesDelAsiento(NpgsqlConnection cn, NpgsqlTransaction tx, int idAsiento)
+        {
+            string sql = "DELETE FROM asiento_detalle WHERE id_asiento = @idAsiento;";
+            using var cmd = new NpgsqlCommand(sql, cn, tx);
+            cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
+            cmd.ExecuteNonQuery();
+        }
+
+        private void EliminarRelacionesDelAsiento(NpgsqlConnection cn, NpgsqlTransaction tx, int idAsiento)
+        {
+            string sql = "DELETE FROM relacion_asiento WHERE asiento_origen = @idAsiento;";
+            using var cmd = new NpgsqlCommand(sql, cn, tx);
+            cmd.Parameters.AddWithValue("@idAsiento", idAsiento);
             cmd.ExecuteNonQuery();
         }
     }

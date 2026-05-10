@@ -1,0 +1,131 @@
+﻿<Window x:Class="Inmobiliaria_KapiConta.Views.GestionAsiento.BuscarAsientoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Inmobiliaria_KapiConta.Views.GestionAsiento"
+        mc:Ignorable="d"
+        Title="BuscarAsientoWindow"  
+        Height="520"
+        Width="980" 
+        Background="#2E4458">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="44"/>
+        </Grid.RowDefinitions>
+
+        <!-- Filtros -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="110"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                   Text="Mes"
+                   Foreground="White"
+                   VerticalAlignment="Center"/>
+
+            <ComboBox x:Name="cmbMes"
+                  Grid.Column="1"
+                  Height="28"
+                  Margin="0,0,10,0"
+                  VerticalAlignment="Center"
+                  ItemsSource="{Binding Meses}"
+                  SelectedItem="{Binding MesSeleccionado}"
+                  DisplayMemberPath="mes"/>
+
+            <TextBlock Grid.Column="2"
+                   Text="Sub"
+                   Foreground="White"
+                   VerticalAlignment="Center"/>
+
+            <ComboBox x:Name="cmbSubDiario"
+                  Grid.Column="3"
+                  Height="28"
+                  Margin="0,0,10,0"
+                  VerticalAlignment="Center"
+                  ItemsSource="{Binding SubDiarios}"
+                  SelectedItem="{Binding SubDiarioSeleccionado}"
+                  DisplayMemberPath="Diario"/>
+
+            <TextBlock Grid.Column="4"
+                   Text="Buscar"
+                   Foreground="White"
+                   VerticalAlignment="Center"/>
+
+            <TextBox x:Name="txtBuscar"
+                 Grid.Column="5"
+                 Height="28"
+                 Margin="0,0,10,0"
+                 VerticalContentAlignment="Center"
+                 VerticalAlignment="Center"
+                 Text="{Binding TextoBuscar, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Button x:Name="btnBuscar"
+                Grid.Column="6"
+                Height="30"
+                Content="Buscar"
+                Background="#2BBF5A"
+                Foreground="White"
+                FontWeight="Bold"
+                Command="{Binding BuscarCommand}"/>
+        </Grid>
+
+        <!-- Tabla -->
+        <DataGrid x:Name="dgAsientos"
+              Grid.Row="1"
+              Margin="0,10,0,10"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              CanUserAddRows="False"
+              CanUserDeleteRows="False"
+              ItemsSource="{Binding Resultados}"
+              SelectedItem="{Binding ItemSeleccionado}"
+              MouseDoubleClick="dgAsientos_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Referencia" Binding="{Binding Referencia}" Width="130"/>
+                <DataGridTextColumn Header="Mes" Binding="{Binding MesCodigo}" Width="60"/>
+                <DataGridTextColumn Header="SubDiario" Binding="{Binding SubDiarioCodigo}" Width="80"/>
+                <DataGridTextColumn Header="Fecha" Binding="{Binding FechaTexto}" Width="110"/>
+                <DataGridTextColumn Header="Glosa" Binding="{Binding Glosa}" Width="*"/>
+                <DataGridTextColumn Header="Importe" Binding="{Binding Importe, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="Usuario" Binding="{Binding Usuario}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Botones -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1"
+                Height="30"
+                Content="Seleccionar"
+                Background="#2BBF5A"
+                Foreground="White"
+                FontWeight="Bold"
+                Command="{Binding SeleccionarCommand}"/>
+
+            <Button Grid.Column="3"
+                Height="30"
+                Content="Cerrar"
+                Background="#D2452D"
+                Foreground="White"
+                FontWeight="Bold"
+                Command="{Binding CerrarCommand}"/>
+        </Grid>
+    </Grid>
+</Window>

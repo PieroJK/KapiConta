@@ -1,5 +1,6 @@
 ﻿using Inmobiliaria_KapiConta.Helpers;
 using Inmobiliaria_KapiConta.Models;
+using Inmobiliaria_KapiConta.Models.DTOs;
 using Inmobiliaria_KapiConta.Services;
 using Inmobiliaria_KapiConta.Views.GestionAsiento;
 using System.Collections.ObjectModel;
@@ -56,11 +57,36 @@ namespace Inmobiliaria_KapiConta.ViewModels
         public ICommand RevertirDetalleCommand { get; set; }
 
         public ICommand AplicarDiferenciaCommand { get; set; }
+
         public ICommand QuitarDetalleCommand { get; set; }
+
+        public ICommand BuscarAsientoCommand { get; set; }
+
+        public ICommand ModificarCommand { get; set; }
+
+        public ICommand EliminarCommand { get; set; }
+
+        public ICommand RevertirAsientoCommand { get; set; }
+
+        public ICommand CopiarAsientoCommand { get; set; }
 
         // =========================
         // SELECCIONES
         // =========================
+
+        private bool _modoAgregar = false;
+public bool ModoAgregar
+{
+    get => _modoAgregar;
+    set { _modoAgregar = value; OnPropertyChanged(); }
+}
+
+private bool _modoBuscar = false;
+public bool ModoBuscar
+{
+    get => _modoBuscar;
+    set { _modoBuscar = value; OnPropertyChanged(); }
+}
 
         // Propiedad para la fila seleccionada — en la sección SELECCIONES
         private AsientoDetalle _detalleSeleccionado;
@@ -200,6 +226,7 @@ namespace Inmobiliaria_KapiConta.ViewModels
             AbrirCajaAsientoCommand = new RelayCommand(AbrirCajaAsiento);
             AbrirPendientesCommand = new RelayCommand(AbrirPendientes);
             QuitarDetalleCommand = new RelayCommand(QuitarDetalle);
+            BuscarAsientoCommand = new RelayCommand(AbrirBuscarAsiento);
 
             _mesService = new MesService();
             _subDiarioService = new SubDiarioService();
@@ -678,6 +705,190 @@ namespace Inmobiliaria_KapiConta.ViewModels
         // ===========================    
         // METODOS BOTONES DERECHA
         // ===========================
+
+        private void ModificarAsiento()
+        {
+            try
+            {
+                if (!_idAsientoActual.HasValue)
+                {
+                    MessageBox.Show("No hay un asiento cargado desde BD para modificar.", "Asientos",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (MesSeleccionado == null || SubDiarioSeleccionado == null ||
+                    LibroSeleccionado == null || Fecha == null)
+                {
+                    MessageBox.Show("Faltan datos de cabecera.", "Validación",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (Detalle.Count == 0)
+                {
+                    MessageBox.Show("Debes agregar al menos una línea.", "Validación",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                decimal totalDebe = Detalle.Sum(x => x.Debe);
+                decimal totalHaber = Detalle.Sum(x => x.Haber);
+
+                if (Math.Round(totalDebe, 2) != Math.Round(totalHaber, 2))
+                {
+                    MessageBox.Show("Debe y Haber no cuadran.", "Validación",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // =========================
+                // CONSTRUIR MODELOS
+                // =========================
+                var cabecera = new Asiento
+                {
+                    IdMes = MesSeleccionado.IdMes,
+                    IdSubDiario = SubDiarioSeleccionado.IdSubDiario,
+                    IdLibro = LibroSeleccionado.IdLibro,
+                    Referencia = Referencia,
+                    Fecha = Fecha.Value,
+                    Moneda = MonedaSeleccionada,
+                    IdTipoCambio = null,
+                    FechaVen = FechaVencimiento,
+                    IdUsuario = Session.CurrentUser.Id
+                };
+
+                var detalles = Detalle.ToList();
+
+                // =========================
+                // MODIFICAR
+                // =========================
+                var service = new AsientoService();
+                service.ModificarAsiento(_idAsientoActual.Value, cabecera, detalles);
+
+                MessageBox.Show("Asiento modificado correctamente.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                CargarAsientoPorId(_idAsientoActual.Value);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al modificar asiento.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void EliminarAsiento()
+        {
+            try
+            {
+                if (!_idAsientoActual.HasValue)
+                {
+                    MessageBox.Show("No hay un asiento cargado para eliminar.", "Asientos",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var result = MessageBox.Show(
+                    $"¿Deseas eliminar el asiento {Referencia}?",
+                    "Confirmar eliminación",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result != MessageBoxResult.Yes)
+                    return;
+
+                var service = new AsientoService();
+                service.EliminarAsiento(_idAsientoActual.Value);
+
+                MessageBox.Show("Asiento eliminado correctamente.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                Limpiar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al eliminar asiento.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RevertirAsiento()
+        {
+            if (Detalle.Count == 0)
+            {
+                MessageBox.Show("No hay líneas para revertir.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            foreach (var item in Detalle)
+            {
+                decimal debeOriginal = item.Debe;
+                decimal haberOriginal = item.Haber;
+
+                item.Debe = haberOriginal;
+                item.Haber = debeOriginal;
+            }
+
+            RecalcularTotales();
+        }
+
+        private void CopiarAsiento()
+        {
+            if (Detalle.Count == 0)
+            {
+                MessageBox.Show("No hay asiento cargado para copiar.", "Asientos",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            _idAsientoActual = null;
+            GenerarReferenciaTemporal();
+            FechaEstado = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+            MessageBox.Show(
+                "Se preparó una copia del asiento actual con nueva referencia. Ahora puedes Guardar.",
+                "Asientos", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void AbrirBuscarAsiento()
+        {
+            try
+            {
+                var ventana = new BuscarAsientoWindow
+                {
+                    Owner = Application.Current.Windows
+                        .OfType<Window>()
+                        .FirstOrDefault(w => w.IsActive)
+                };
+
+                // 🔥 inyectar callbacks al VM de la ventana
+                if (ventana.DataContext is BuscarAsientoViewModel vm)
+                {
+                    vm.CerrarVentana = resultado =>
+                    {
+                        ventana.DialogResult = resultado;
+                        ventana.Close();
+                    };
+
+                    vm.AsientoSeleccionado = idAsiento =>
+                    {
+                        CargarAsientoPorId(idAsiento);
+                        ActivarModoBuscar();
+                    };
+                }
+
+                ventana.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al abrir búsqueda de asientos.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private int _contadorGuardado = 0;
         private void GuardarAsiento()
         {
@@ -807,6 +1018,89 @@ namespace Inmobiliaria_KapiConta.ViewModels
             _idAsientoActual = null;
 
             _limpiando = false;           // 🔓 desbloquear efectos secundarios
+        }
+
+        // En la sección METODOS BOTONES DERECHA
+
+        private void CargarAsientoPorId(int idAsiento)
+        {
+            try
+            {
+                var service = new AsientoService();
+                var asiento = service.ObtenerAsientoPorId(idAsiento);
+
+                if (asiento == null)
+                {
+                    MessageBox.Show("No se encontró el asiento.", "Asientos",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                AplicarAsientoEnPantalla(asiento);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar asiento.\n\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AplicarAsientoEnPantalla(AsientoCargadoItem asiento)
+        {
+            _limpiando = true;  // 🔒 evitar efectos secundarios
+
+            _idAsientoActual = asiento.IdAsiento;
+            Referencia = asiento.Referencia;
+
+            MesSeleccionado = Meses.FirstOrDefault(x => x.IdMes == asiento.IdMes);
+            SubDiarioSeleccionado = SubDiarios.FirstOrDefault(x => x.IdSubDiario == asiento.IdSubDiario);
+            LibroSeleccionado = Libros.FirstOrDefault(x => x.IdLibro == asiento.IdLibro);
+
+            Fecha = asiento.Fecha;
+            MonedaSeleccionada = asiento.Moneda;
+            FechaVencimiento = asiento.FechaVencimiento;
+
+            _limpiando = false;  // 🔓 reactivar
+
+            // =========================
+            // DETALLE
+            // =========================
+            Detalle.Clear();
+
+            foreach (var item in asiento.Detalles)
+            {
+                Detalle.Add(new AsientoDetalle
+                {
+                    IdPlanCuenta = item.IdPlanCuenta,
+                    PlanCuenta = new PlanCuenta
+                    {
+                        IdPlanCuenta = item.IdPlanCuenta,
+                        Codigo = item.CuentaCodigo,
+                        Descripcion = item.CuentaNombre,
+                    },
+                    Moneda = item.Moneda,
+                    Debe = item.Debe,
+                    Haber = item.Haber,
+                    IdTipoFacturacion = item.IdTipoDocumento,
+                    SerieComprobante = item.Documento,
+                    IdTercero = item.IdTercero,
+                    Tercero = new Tercero
+                    {
+                        Documento = item.Ruc,
+                        RazonSocial = item.RazonSocial,
+                    },
+                    Glosa = item.Glosa,
+                    IdTipoOperacion = item.IdTipoOperacion,
+                });
+            }
+
+            RecalcularTotales();
+        }
+
+        private void ActivarModoBuscar()
+        {
+            ModoBuscar = true;
+            ModoAgregar = false;
         }
     }
 }
