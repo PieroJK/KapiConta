@@ -227,6 +227,11 @@ public bool ModoBuscar
             AbrirPendientesCommand = new RelayCommand(AbrirPendientes);
             QuitarDetalleCommand = new RelayCommand(QuitarDetalle);
             BuscarAsientoCommand = new RelayCommand(AbrirBuscarAsiento);
+            // En el constructor
+            ModificarCommand = new RelayCommand(ModificarAsiento);
+            EliminarCommand = new RelayCommand(EliminarAsiento);
+            RevertirAsientoCommand = new RelayCommand(RevertirAsiento);
+            CopiarAsientoCommand = new RelayCommand(CopiarAsiento);
 
             _mesService = new MesService();
             _subDiarioService = new SubDiarioService();

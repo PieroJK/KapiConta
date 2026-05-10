@@ -90,6 +90,10 @@
             <asientoViews:AsientosWindow/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:ConsultaCuentaViewModel}">
+            <listadoViews:ConsultaCuentasListado/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vm:EnterpriseSelectionViewModel}">
             <enterpriseViews:EnterpriseSelectionView/>
         </DataTemplate>

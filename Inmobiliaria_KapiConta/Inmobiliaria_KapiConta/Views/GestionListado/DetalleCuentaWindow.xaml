@@ -1,0 +1,109 @@
+﻿<Window x:Class="Inmobiliaria_KapiConta.Views.GestionListado.DetalleCuentaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Inmobiliaria_KapiConta.Views.GestionListado"
+        mc:Ignorable="d"
+        Title="DetalleCuentaWindow" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="#2C3E50">
+    <Grid>
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 🔝 HEADER -->
+            <Border Background="#34495E" Padding="10">
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock x:Name="txtTitulo"
+                       Text="{Binding Titulo}"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"/>
+
+                    <!-- 🟢 EXCEL -->
+                    <TextBlock Text="Sub Diario:"
+           VerticalAlignment="Center"
+           Foreground="White"/>
+
+                    <ComboBox x:Name="cbSubDiario"
+                       ItemsSource="{Binding SubDiarios}"
+                       SelectedItem="{Binding SubDiarioSeleccionado}"
+                       DisplayMemberPath="Nombre"
+                       Width="150"
+                       Margin="10,0"
+                       />
+                    <Button Content="Excel"
+                    Background="#27AE60"
+                    Foreground="White"
+                    Width="100"
+                    Margin="20,0,0,0"
+                    Command="{Binding ExcelCommand}"/>
+
+                    <!-- 🔴 CERRAR -->
+                    <Button Content="Cerrar"
+                    Background="#C0392B"
+                    Foreground="White"
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Command="{Binding CerrarCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 📊 GRID -->
+            <Border Grid.Row="1"
+            Margin="10"
+            Background="White"
+            CornerRadius="5">
+
+                <DataGrid x:Name="dgDetalle"
+                  ItemsSource="{Binding Detalle}"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None">
+
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="Referencia"  Binding="{Binding referencia}"                    Width="100"/>
+                        <DataGridTextColumn Header="Fecha"       Binding="{Binding fecha, StringFormat=dd/MM/yyyy}" Width="120"/>
+                        <DataGridTextColumn Header="Cuenta"      Binding="{Binding codigo}"                        Width="100"/>
+                        <DataGridTextColumn Header="Descripción" Binding="{Binding descripcion}"                   Width="200"/>
+                        <!-- 💰 DEBE -->
+                        <DataGridTextColumn Header="Debe"  Binding="{Binding debe,  StringFormat=N2}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="Foreground"    Value="#2E86C1"/>
+                                    <Setter Property="FontWeight"    Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <!-- 💰 HABER -->
+                        <DataGridTextColumn Header="Haber" Binding="{Binding haber, StringFormat=N2}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="Foreground"    Value="#C0392B"/>
+                                    <Setter Property="FontWeight"    Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Glosa" Binding="{Binding glosa}" Width="*"/>
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+</Window>

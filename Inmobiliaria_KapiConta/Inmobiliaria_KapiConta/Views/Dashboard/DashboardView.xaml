@@ -92,6 +92,8 @@
                 <MenuItem Header="Listado">
                     <MenuItem Header="Listado de Asientos" Style="{StaticResource SubMenuItemStyle}"
                      Command="{Binding  ListadoAsientoCommand}"/>
+                    <MenuItem Header="Consultar Cuentas" Style="{StaticResource SubMenuItemStyle}"
+                     Command="{Binding  ConsultasCuentaCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Utilidades"></MenuItem>
                 

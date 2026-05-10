@@ -41,6 +41,12 @@
     <Compile Update="Views\GestionAsiento\SelectorTerceroWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\GestionListado\ConsultaCuentasListado.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\GestionListado\DetalleCuentaWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\GestionListado\ListadoAsientoView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
